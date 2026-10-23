@@ -182,7 +182,7 @@ function safeImg(src){ return (typeof src==='string' && src.startsWith('data:ima
    >>> ONE-TIME SETUP: visit https://getpantry.cloud , tap "Create a Pantry",
    >>> copy your Pantry ID, and paste it between the quotes below. <<<
    FALLBACK: JSONBlob (public service) if no Pantry ID is set. */
-const PANTRY_ID = 'PASTE_YOUR_PANTRY_ID_HERE';
+const PANTRY_ID = 'a64ed0ed-aef9-4cdb-a718-8380fc5b7f8b';
 const usePantry = /^[A-Za-z0-9\-]{20,}$/.test(PANTRY_ID);
 const BLOB_API = 'https://jsonblob.com/api/jsonBlob';
 function pantryUrl(id){ return 'https://getpantry.cloud/apiv1/pantry/' + PANTRY_ID + '/basket/spg' + id; }
