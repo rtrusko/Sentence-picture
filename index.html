@@ -67,7 +67,7 @@ a{color:var(--blue)}
 .viewer-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;cursor:grab;overscroll-behavior:contain}
 .viewer-scroll.dragging{cursor:grabbing}
 .viewer-stage{display:flex;align-items:center;justify-content:center;min-width:100%;min-height:100%}
-.viewer-img{display:block;max-width:none;user-select:none;-webkit-user-drag:none;border-radius:6px}
+.viewer-img{display:block;max-width:none;image-rendering:auto;user-select:none;-webkit-user-drag:none;border-radius:6px}
 .viewer-bar{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:3px solid var(--ink)}
 .viewer-bar button{min-width:46px;height:42px;padding:0 14px;border-radius:12px;background:#fff;color:var(--ink);border:3px solid var(--ink);font-weight:800;font-size:18px}
 .viewer-bar button.close{background:var(--red);color:#fff;font-size:15px}
@@ -187,7 +187,7 @@ footer{margin-top:26px;color:var(--ink-soft);font-size:12px;font-weight:700;text
 <body>
 
 <div class="brand">
-  <button class="banner-btn" id="bannerBtn" type="button" aria-label="Open the banner to look around"><img class="banner" src="banner.jpg" srcset="banner-800.jpg 800w, banner.jpg 1600w" sizes="(max-width: 1100px) 100vw, 1080px" width="1600" height="686" alt="Sentence Picture Game: raccoons crash a speedboat into a beach house while seagulls steal pizza and jellyfish panic"><span class="explore-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"/></svg>look closer</span></button>
+  <button class="banner-btn" id="bannerBtn" type="button" aria-label="Open the banner to look around"><img class="banner" src="banner-full.webp" width="1916" height="821" alt="Sentence Picture Game: raccoons crash a speedboat into a beach house while seagulls steal pizza and jellyfish panic"><span class="explore-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"/></svg>look closer</span></button>
 </div>
 
 <div class="wrap" id="app"></div>
@@ -549,7 +549,7 @@ function openBannerViewer(){
   if(document.querySelector('.viewer')) return;
   const NATW = 1916, NATH = 821;
   const v = document.createElement('div'); v.className = 'viewer';
-  v.innerHTML = `<div class="viewer-scroll" id="vScroll"><div class="viewer-stage" id="vStage"><img class="viewer-img" id="vImg" src="banner-full.jpg" alt="The Sentence Picture Game banner, up close" draggable="false"></div></div>
+  v.innerHTML = `<div class="viewer-scroll" id="vScroll"><div class="viewer-stage" id="vStage"><img class="viewer-img" id="vImg" src="banner-full.webp" alt="The Sentence Picture Game banner, up close" draggable="false"></div></div>
     <div class="viewer-hint" id="vHint">drag to look around · pinch or +/− to zoom</div>
     <div class="viewer-bar"><button id="vOut" aria-label="Zoom out">−</button><button id="vFit" aria-label="Show the whole banner">Fit</button><button id="vIn" aria-label="Zoom in">+</button><button class="close" id="vClose">Close</button></div>`;
   document.body.appendChild(v);
@@ -621,7 +621,7 @@ document.addEventListener('click', e=>{ if(e.target.closest && e.target.closest(
 /* ---------- INTRO: banner swoops in, then settles into place ---------- */
 /* full-resolution banner for the intro tour, fetched while the password page is open */
 let FULL_BANNER = null;
-function preloadFullBanner(){ if(!FULL_BANNER){ FULL_BANNER = new Image(); FULL_BANNER.src = 'banner-full.jpg'; } return FULL_BANNER; }
+function preloadFullBanner(){ if(!FULL_BANNER){ FULL_BANNER = new Image(); FULL_BANNER.src = 'banner-full.webp'; } return FULL_BANNER; }
 
 function playIntro(){
   return new Promise(async resolve=>{
