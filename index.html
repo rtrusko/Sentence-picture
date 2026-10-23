@@ -709,13 +709,13 @@ function renderHome(){
     <h2>Past games</h2>
     <div id="pastList" class="hint" style="margin:0">Loading…</div>
   </div>
-  <div class="card">
-    <h2>Got a pass-along code?</h2>
-    <p class="hint">Backup route. If someone texted you a code or link instead, paste it here.</p>
+  <div class="card hidden" id="codeCard">
+    <h2>Have a code?</h2>
+    <p class="hint">If someone texted you a game code because the paper couldn\u2019t be saved, paste the whole message here.</p>
     <div class="field"><textarea class="paste" id="codeIn" placeholder="Paste it here…"></textarea></div>
     <button class="btn alt" id="continueBtn">Take my turn</button>
   </div>
-  <p class="tiny"><a id="changePw">Change family password on this phone</a></p>`;
+  <p class="tiny"><a id="haveCode">Have a code?</a> · <a id="changePw">Change family password on this phone</a></p>`;
   $('#startBtn').onclick = ()=>{
     const nm = $('#nameNew').value.trim();
     if(!nm){ S.err='Give us a name first.'; render(); return; }
@@ -725,6 +725,7 @@ function renderHome(){
     S.screen='write'; render();
   };
   $('#continueBtn').onclick = ()=> loadFromInput($('#codeIn').value);
+  $('#haveCode').onclick = ()=>{ const c=$('#codeCard'); c.classList.remove('hidden'); c.scrollIntoView({behavior:'smooth', block:'center'}); $('#codeIn').focus(); };
   $('#changePw').onclick = ()=>{ forgetPassword(); S.err=''; S.screen='password'; render(); };
   loadHome();
 }
@@ -1064,22 +1065,17 @@ function renderPass(){
     ${saved ? `<button class="btn" id="shareTurn">Nudge the next player</button>` : ''}
     ${n>=2 && saved ? `<button class="btn gold" id="shareReveal">We’re done, tell everyone to unfold it</button>` : ''}
     ${n>=2 ? `<button class="btn alt" id="revealNow">Unfold it right here</button>` : ''}
-    <div class="divider">BACKUP</div>
-    <p class="hint">If someone can’t get to the paper, send the whole fold as a text code instead. It’s long, but it always works.</p>
-    <button class="btn alt" id="codeTurn">Send as a full-text code</button>
-    ${n>=2 ? `<button class="btn alt" id="codeReveal">Send the reveal as a full-text code</button>` : ''}
+    ${saved ? '' : `<button class="btn gold" id="codeTurn">Send as a full-text code</button>
+    ${n>=2 ? `<button class="btn alt" id="codeReveal">Send the reveal as a full-text code</button>` : ''}`}
     <div class="divider">PAPER COME BACK TO YOU?</div>
-    <p class="hint">When it’s your turn again, you can check from right here.</p>
     <button class="btn lake" id="checkHere">Check the paper</button>
-    <div class="field" style="margin-top:14px"><textarea class="paste" id="nextIn" placeholder="…or paste a pass-along code here"></textarea></div>
-    <button class="btn alt" id="takeNext">Take my turn from this code</button>
     <button class="btn alt" id="homeBtn">Back to the dock</button>
     <div class="errmsg">${esc(S.err)}</div>
   </div>`;
   if($('#shareTurn')) $('#shareTurn').onclick = e => shareText(passMessage(), e.target, 'Copied, paste it in a text');
   if($('#shareReveal')) $('#shareReveal').onclick = async e => { await markDoneEverywhere(); shareText(revealMessage(), e.target, 'Copied, paste it in the group text'); };
   if($('#revealNow')) $('#revealNow').onclick = async ()=>{ await markDoneEverywhere(); S.screen='reveal'; S.revealShown=1; render(); };
-  $('#codeTurn').onclick = e => shareText(codeMessage(), e.target, 'Copied');
+  if($('#codeTurn')) $('#codeTurn').onclick = e => shareText(codeMessage(), e.target, 'Copied');
   if($('#codeReveal')) $('#codeReveal').onclick = async e => { await markDoneEverywhere(); shareText(codeRevealMessage(), e.target, 'Copied'); };
   $('#checkHere').onclick = async e=>{
     const id = S.state.room;
@@ -1091,7 +1087,6 @@ function renderPass(){
     if(st.entries.length === S.state.entries.length && !st.done){ S.err='Still waiting on the next player.'; render(); return; }
     enterState(st);
   };
-  $('#takeNext').onclick = ()=> loadFromInput($('#nextIn').value);
   $('#homeBtn').onclick = ()=>{ S.err=''; S.screen='home'; render(); };
 }
 
