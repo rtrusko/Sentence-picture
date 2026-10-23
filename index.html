@@ -18,17 +18,23 @@
   --blue:#1468D6; --blue-deep:#0B3F8C;
   --navy:#1B2D6B;
   --sky:#EAF7FF;
+  --sky-top:#3EB7FE; --sky-bottom:#1B7FDB;
   --redpen:#E8291C;
   --radius:14px;
   --comic-shadow:5px 5px 0 var(--ink);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{background:#fff}
+html{background:var(--sky-bottom)}
+html.locked{background:#fff}
 html,body{min-height:100%}
 body{
   font-family:'Nunito',system-ui,sans-serif;color:var(--ink);
-  background:#fff;
-  min-height:100%;display:flex;flex-direction:column;align-items:center;padding:18px 14px 60px;
+  /* game pages: the banner's comic sky, with a faint halftone like the art */
+  background:
+    radial-gradient(rgba(255,255,255,.16) 1.4px, transparent 1.6px) 0 0/14px 14px,
+    linear-gradient(180deg, var(--sky-top) 0, var(--sky-bottom) 900px) no-repeat,
+    var(--sky-bottom);
+  min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;padding:18px 14px 60px;
 }
 h1,h2,h3{font-family:'Shantell Sans','Comic Sans MS',cursive}
 button{font-family:inherit;cursor:pointer;border:none}
@@ -164,6 +170,10 @@ canvas.pad{display:block;width:100%;height:auto;touch-action:none;-webkit-user-s
 .gamerow .gmeta{font-size:12px;color:var(--ink-soft);font-weight:700}
 .gamerow .gstatus{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--paper-shade);color:var(--ink-soft)}
 .gamerow .gstatus.live{background:var(--yellow);color:var(--ink)}
+body.locked{background:#fff}
+body:not(.locked) .tiny{color:rgba(255,255,255,.9)}
+body:not(.locked) .tiny a{color:#fff}
+body:not(.locked) footer{color:rgba(255,255,255,.85)}
 .tiny{color:var(--ink-soft);font-size:12px;font-weight:700;text-align:center;margin-top:16px}
 .tiny a{color:var(--blue);text-decoration:underline;cursor:pointer}
 .pwrow{display:flex;gap:8px}
@@ -458,6 +468,8 @@ let lastScreen = null;
 function render(){
   app.classList.toggle('home', S.screen==='home');
   document.querySelector('.brand').classList.toggle('locked', S.screen==='password');
+  document.body.classList.toggle('locked', S.screen==='password');
+  document.documentElement.classList.toggle('locked', S.screen==='password');
   document.querySelector('footer').style.display = S.screen==='password' ? 'none' : '';
   document.querySelector('.brand').classList.toggle('compact', !(S.screen==='home' || S.screen==='password'));
   ({home:renderHome, password:renderPassword, write:renderWrite, draw:renderDraw, pass:renderPass, reveal:renderReveal})[S.screen]();
@@ -676,6 +688,7 @@ function playIntro(){
       {offset:1,    transform:`translate(0px,0px) scale(${1/Z})`, opacity:1, borderColor:'#121212', borderRadius:(16*Z)+'px'} // shrink into the banner spot
     ], {duration:D, fill:'forwards'});
     hint.animate([{opacity:0},{opacity:1,offset:.1},{opacity:1,offset:.7},{opacity:0,offset:.8},{opacity:0}], {duration:D, fill:'forwards'});
+    overlay.animate([{backgroundColor:'rgba(255,255,255,1)'},{backgroundColor:'rgba(255,255,255,1)',offset:.8},{backgroundColor:'rgba(255,255,255,0)'}], {duration:D, fill:'forwards'});
     tour.onfinish = finish;
     setTimeout(finish, D + 2000); // safety net
   });
