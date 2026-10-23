@@ -29,9 +29,22 @@ h1,h2,h3{font-family:'Shantell Sans','Comic Sans MS',cursive}
 button{font-family:inherit;cursor:pointer;border:none}
 input,textarea{font-family:inherit}
 a{color:var(--foam)}
-.wrap{width:100%;max-width:560px}
-.wrap.wide{max-width:760px}
-.brand{width:100%;max-width:800px;margin:0 auto 18px;user-select:none}
+:root{--page:1080px}
+.wrap{width:100%;max-width:var(--page)}
+.brand{width:100%;max-width:var(--page);margin:0 auto 18px;user-select:none}
+/* laptop layouts */
+@media (min-width:860px){
+  .wrap.home{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  .wrap.home .card + .card{margin-top:0}
+  .wrap.home .tiny{grid-column:1 / -1}
+  .brand.compact .banner{height:160px;object-fit:cover;object-position:50% 0%}
+  .banner{transition:height .25s ease}
+  .draw-grid{display:grid;grid-template-columns:minmax(280px,340px) 1fr;gap:22px;align-items:start}
+  .draw-side .toolbar .swatch{width:30px;height:30px}
+}
+.canvas-holder{max-width:calc(74vh * 4 / 3);margin:0 auto}
+.panel .drawing,.panel .comic{max-width:calc(70vh * 4 / 3);margin-left:auto;margin-right:auto}
+.prev-entry .drawing{max-width:calc(48vh * 4 / 3);margin:0 auto}
 .banner{display:block;width:100%;height:auto;border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.35);border:3px solid #fff}
 .brand h1{font-size:clamp(28px,6.5vw,40px);font-weight:800;line-height:1.1;text-shadow:0 1px 0 rgba(255,255,255,.45)}
 .brand h1 .w1{color:var(--mahogany)}
@@ -126,7 +139,7 @@ canvas.pad{display:block;width:100%;height:auto;touch-action:none;-webkit-user-s
 .pwrow input{flex:1}
 .pwrow button{width:auto;padding:0 14px;border-radius:10px;background:var(--paper-shade);font-weight:800;font-size:13px}
 .ico{width:16px;height:16px;flex:none}
-footer{margin-top:26px;color:rgba(255,255,255,.55);font-size:12px;font-weight:700;text-align:center;max-width:560px;line-height:1.5}
+footer{margin-top:26px;color:rgba(255,255,255,.55);font-size:12px;font-weight:700;text-align:center;max-width:var(--page);line-height:1.5}
 .hidden{display:none !important}
 </style>
 </head>
@@ -406,7 +419,8 @@ function renderPrevEntry(container){
 ===================================================== */
 let lastScreen = null;
 function render(){
-  app.classList.toggle('wide', S.screen==='draw' || S.screen==='reveal');
+  app.classList.toggle('home', S.screen==='home');
+  document.querySelector('.brand').classList.toggle('compact', !(S.screen==='home' || S.screen==='password'));
   ({home:renderHome, password:renderPassword, write:renderWrite, draw:renderDraw, pass:renderPass, reveal:renderReveal})[S.screen]();
   if(S.screen !== lastScreen) window.scrollTo({top:0});
   lastScreen = S.screen;
@@ -599,15 +613,21 @@ function renderDraw(){
   <div class="card">
     <span class="round-pill">fold ${foldNum()}</span>
     <div class="prompt-label">Draw this</div>
-    <div class="prev-entry" id="prev"></div>
-    <div class="pane-tabs" id="paneTabs"></div>
-    <div class="toolbar" id="tools"></div>
-    <div class="canvas-holder" id="holder"></div>
-    <p class="hint" style="margin:8px 0 0">Want a comic strip? Tap <b>+ Add a panel</b>. Or add a photo and draw on top of it.</p>
-    <div style="height:12px"></div>
-    ${nameFieldHtml()}
-    <button class="btn" id="passBtn">Fold it</button>
-    <div class="errmsg">${esc(S.err)}</div>
+    <div class="draw-grid">
+      <div class="draw-side">
+        <div class="prev-entry" id="prev"></div>
+        <div class="pane-tabs" id="paneTabs"></div>
+        <div class="toolbar" id="tools"></div>
+      </div>
+      <div class="draw-main">
+        <div class="canvas-holder" id="holder"></div>
+        <p class="hint" style="margin:8px 0 0">Want a comic strip? Tap <b>+ Add a panel</b>. Or add a photo and draw on top of it.</p>
+        <div style="height:12px"></div>
+        ${nameFieldHtml()}
+        <button class="btn" id="passBtn">Fold it</button>
+        <div class="errmsg">${esc(S.err)}</div>
+      </div>
+    </div>
   </div>`;
   renderPrevEntry($('#prev'));
   const board = makeBoard($('#holder'), $('#tools'), $('#paneTabs'));
