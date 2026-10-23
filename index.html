@@ -47,7 +47,20 @@ a{color:var(--foam)}
 .prev-entry .drawing{max-width:calc(48vh * 4 / 3);margin:0 auto}
 .banner{display:block;width:100%;height:auto;border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.35);border:3px solid #fff}
 .brand.locked{display:none}
-.brand.intro .banner{visibility:hidden}
+.banner-btn{position:relative;display:block;width:100%;padding:0;background:none;border:none;cursor:zoom-in;border-radius:16px}
+.banner-btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.explore-tag{position:absolute;right:12px;bottom:12px;display:flex;align-items:center;gap:6px;background:rgba(15,40,52,.78);color:#fff;font-weight:800;font-size:12px;padding:6px 10px;border-radius:999px;pointer-events:none;opacity:.9}
+.explore-tag svg{width:14px;height:14px}
+.viewer{position:fixed;inset:0;z-index:60;background:#06161E;display:flex;flex-direction:column}
+.viewer-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;cursor:grab;overscroll-behavior:contain}
+.viewer-scroll.dragging{cursor:grabbing}
+.viewer-stage{display:flex;align-items:center;justify-content:center;min-width:100%;min-height:100%}
+.viewer-img{display:block;max-width:none;user-select:none;-webkit-user-drag:none;border-radius:6px}
+.viewer-bar{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(0,0,0,.35)}
+.viewer-bar button{min-width:46px;height:42px;padding:0 14px;border-radius:12px;background:rgba(255,255,255,.14);color:#fff;font-weight:800;font-size:18px}
+.viewer-bar button.close{background:#fff;color:var(--ink);font-size:15px}
+.viewer-hint{position:absolute;top:calc(12px + env(safe-area-inset-top));left:0;right:0;text-align:center;color:rgba(255,255,255,.8);font-weight:800;font-size:13px;pointer-events:none;transition:opacity .6s}
+.brand.intro .banner,.brand.intro .explore-tag{visibility:hidden}
 #app.intro-hold{opacity:0}
 #app.intro-in{animation:introCards .6s ease both}
 @keyframes introCards{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
@@ -175,7 +188,7 @@ footer{margin-top:26px;color:rgba(255,255,255,.55);font-size:12px;font-weight:70
 <body>
 
 <div class="brand">
-  <img class="banner" src="banner.jpg" srcset="banner-800.jpg 800w, banner.jpg 1600w" sizes="(max-width: 820px) 100vw, 800px" width="1600" height="686" alt="Sentence Picture Game: raccoons crash a speedboat into a beach house while seagulls steal pizza and jellyfish panic">
+  <button class="banner-btn" id="bannerBtn" type="button" aria-label="Open the banner to look around"><img class="banner" src="banner.jpg" srcset="banner-800.jpg 800w, banner.jpg 1600w" sizes="(max-width: 1100px) 100vw, 1080px" width="1600" height="686" alt="Sentence Picture Game: raccoons crash a speedboat into a beach house while seagulls steal pizza and jellyfish panic"><span class="explore-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"/></svg>look closer</span></button>
 </div>
 
 <div class="wrap" id="app"></div>
@@ -533,6 +546,80 @@ function wrongPassword(){
   S.screen='password'; render();
 }
 
+/* ---------- BANNER EXPLORER: tap the banner to pan and zoom around it ---------- */
+function openBannerViewer(){
+  if(document.querySelector('.viewer')) return;
+  const NATW = 1916, NATH = 821;
+  const v = document.createElement('div'); v.className = 'viewer';
+  v.innerHTML = `<div class="viewer-scroll" id="vScroll"><div class="viewer-stage" id="vStage"><img class="viewer-img" id="vImg" src="banner-full.jpg" alt="The Sentence Picture Game banner, up close" draggable="false"></div></div>
+    <div class="viewer-hint" id="vHint">drag to look around · pinch or +/− to zoom</div>
+    <div class="viewer-bar"><button id="vOut" aria-label="Zoom out">−</button><button id="vFit" aria-label="Show the whole banner">Fit</button><button id="vIn" aria-label="Zoom in">+</button><button class="close" id="vClose">Close</button></div>`;
+  document.body.appendChild(v);
+  document.body.style.overflow='hidden';
+  const sc = v.querySelector('#vScroll'), stage = v.querySelector('#vStage'), img = v.querySelector('#vImg');
+  const fitW = ()=> Math.min(sc.clientWidth*0.96, (sc.clientHeight*0.96)*NATW/NATH);
+  const maxW = ()=> Math.max(NATW*1.6, fitW()*4);
+  let w = 0;
+  function setW(newW, cx, cy){
+    newW = Math.max(fitW(), Math.min(maxW(), newW));
+    // keep the point under (cx,cy) in place
+    const r = img.getBoundingClientRect();
+    const fx = w ? (cx - r.left)/r.width : .5, fy = w ? (cy - r.top)/r.height : .5;
+    w = newW;
+    img.style.width = w+'px'; img.style.height = (w*NATH/NATW)+'px';
+    stage.style.width = Math.max(sc.clientWidth, w)+'px'; stage.style.height = Math.max(sc.clientHeight, w*NATH/NATW)+'px';
+    const r2 = img.getBoundingClientRect(), sr = sc.getBoundingClientRect();
+    sc.scrollLeft += (r2.left + fx*r2.width) - cx;
+    sc.scrollTop  += (r2.top  + fy*r2.height) - cy;
+  }
+  const center = ()=>{ const sr = sc.getBoundingClientRect(); return [sr.left+sr.width/2, sr.top+sr.height/2]; };
+  // open zoomed in enough to explore: fill the screen height on phones, ~1.8x on laptops
+  const portrait = sc.clientHeight > sc.clientWidth;
+  setW(fitW(), ...center());
+  const startW = portrait ? sc.clientHeight*0.9*NATW/NATH : fitW()*1.8;
+  setW(startW, ...center());
+  sc.scrollLeft = 0; // start at the title
+  sc.scrollTop = (sc.scrollHeight - sc.clientHeight) * 0.5;
+  setTimeout(()=>{ const h=v.querySelector('#vHint'); if(h) h.style.opacity='0'; }, 2600);
+
+  v.querySelector('#vIn').onclick = ()=> setW(w*1.4, ...center());
+  v.querySelector('#vOut').onclick = ()=> setW(w/1.4, ...center());
+  v.querySelector('#vFit').onclick = ()=> setW(fitW(), ...center());
+  const close = ()=>{ v.remove(); document.body.style.overflow=''; document.removeEventListener('keydown', onKey); $('#bannerBtn') && $('#bannerBtn').focus(); };
+  v.querySelector('#vClose').onclick = close;
+  const onKey = e=>{ if(e.key==='Escape') close(); if(e.key==='+'||e.key==='=') setW(w*1.4, ...center()); if(e.key==='-') setW(w/1.4, ...center()); };
+  document.addEventListener('keydown', onKey);
+  // mouse: drag to pan, wheel to scroll, ctrl/cmd+wheel or trackpad pinch to zoom, double-click to zoom
+  let drag = null;
+  sc.addEventListener('pointerdown', e=>{ if(e.pointerType!=='mouse') return; drag={x:e.clientX,y:e.clientY,l:sc.scrollLeft,t:sc.scrollTop}; sc.classList.add('dragging'); sc.setPointerCapture(e.pointerId); });
+  sc.addEventListener('pointermove', e=>{ if(!drag) return; sc.scrollLeft = drag.l - (e.clientX-drag.x); sc.scrollTop = drag.t - (e.clientY-drag.y); });
+  const endDrag = ()=>{ drag=null; sc.classList.remove('dragging'); };
+  sc.addEventListener('pointerup', endDrag); sc.addEventListener('pointercancel', endDrag);
+  sc.addEventListener('wheel', e=>{ if(e.ctrlKey||e.metaKey){ e.preventDefault(); setW(w*Math.exp(-e.deltaY*0.01), e.clientX, e.clientY); } }, {passive:false});
+  sc.addEventListener('dblclick', e=>{ setW(w < fitW()*2.5 ? w*2 : fitW(), e.clientX, e.clientY); });
+  // touch: two-finger pinch zoom (one finger scrolls natively), double-tap zoom
+  let pinch = null, lastTap = 0;
+  sc.addEventListener('touchstart', e=>{
+    if(e.touches.length===2){
+      const [a,b] = e.touches;
+      pinch = {d:Math.hypot(a.clientX-b.clientX, a.clientY-b.clientY), w, cx:(a.clientX+b.clientX)/2, cy:(a.clientY+b.clientY)/2};
+    } else if(e.touches.length===1){
+      const now = Date.now(), t = e.touches[0];
+      if(now - lastTap < 300){ e.preventDefault(); setW(w < fitW()*2.5 ? w*2 : fitW(), t.clientX, t.clientY); lastTap = 0; } else lastTap = now;
+    }
+  }, {passive:false});
+  sc.addEventListener('touchmove', e=>{
+    if(pinch && e.touches.length===2){
+      e.preventDefault();
+      const [a,b] = e.touches;
+      setW(pinch.w * Math.hypot(a.clientX-b.clientX, a.clientY-b.clientY)/pinch.d, pinch.cx, pinch.cy);
+    }
+  }, {passive:false});
+  sc.addEventListener('touchend', e=>{ if(e.touches.length<2) pinch=null; });
+  window.addEventListener('resize', ()=>{ if(document.body.contains(v)) setW(w, ...center()); });
+}
+document.addEventListener('click', e=>{ if(e.target.closest && e.target.closest('#bannerBtn')) openBannerViewer(); });
+
 /* ---------- INTRO: banner swoops in, then settles into place ---------- */
 function playIntro(){
   return new Promise(async resolve=>{
@@ -584,10 +671,10 @@ function playIntro(){
       {offset:0.74, transform:T(dx, dy, s, 0), easing:'cubic-bezier(.6,0,.2,1)'},
       // drops into the banner spot
       {offset:1,    transform:T(0, 0, 1, 0), opacity:1, filter:'blur(0px)'},
-    ], {duration:2700, easing:'cubic-bezier(.3,0,.3,1)', fill:'forwards'});
-    overlay.animate([{opacity:0},{opacity:1,offset:.12},{opacity:1,offset:.78},{opacity:0}], {duration:2700, fill:'forwards'});
+    ], {duration:4000, easing:'cubic-bezier(.3,0,.3,1)', fill:'forwards'});
+    overlay.animate([{opacity:0},{opacity:1,offset:.12},{opacity:1,offset:.78},{opacity:0}], {duration:4000, fill:'forwards'});
     fly.onfinish = finish;
-    setTimeout(finish, 4000); // safety net
+    setTimeout(finish, 5500); // safety net
   });
 }
 
