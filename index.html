@@ -46,6 +46,15 @@ a{color:var(--foam)}
 .panel .drawing,.panel .comic{max-width:calc(70vh * 4 / 3);margin-left:auto;margin-right:auto}
 .prev-entry .drawing{max-width:calc(48vh * 4 / 3);margin:0 auto}
 .banner{display:block;width:100%;height:auto;border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.35);border:3px solid #fff}
+.brand.locked{display:none}
+.brand.intro .banner{visibility:hidden}
+#app.intro-hold{opacity:0}
+#app.intro-in{animation:introCards .6s ease both}
+@keyframes introCards{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.intro-overlay{position:fixed;inset:0;z-index:50;background:rgba(8,40,52,.72);cursor:pointer;overflow:hidden}
+.intro-img{position:fixed;transform-origin:50% 50%;border-radius:16px;border:3px solid #fff;box-shadow:0 30px 60px rgba(0,0,0,.45);will-change:transform,opacity,filter;pointer-events:none}
+.intro-skip{position:fixed;bottom:22px;left:0;right:0;text-align:center;color:rgba(255,255,255,.75);font-weight:800;font-size:13px;letter-spacing:1px;pointer-events:none}
+.password-pad{height:6vh}
 .brand h1{font-size:clamp(28px,6.5vw,40px);font-weight:800;line-height:1.1;text-shadow:0 1px 0 rgba(255,255,255,.45)}
 .brand h1 .w1{color:var(--mahogany)}
 .brand h1 .w2{color:#1F5F6E}
@@ -420,6 +429,7 @@ function renderPrevEntry(container){
 let lastScreen = null;
 function render(){
   app.classList.toggle('home', S.screen==='home');
+  document.querySelector('.brand').classList.toggle('locked', S.screen==='password');
   document.querySelector('.brand').classList.toggle('compact', !(S.screen==='home' || S.screen==='password'));
   ({home:renderHome, password:renderPassword, write:renderWrite, draw:renderDraw, pass:renderPass, reveal:renderReveal})[S.screen]();
   if(S.screen !== lastScreen) window.scrollTo({top:0});
@@ -434,6 +444,7 @@ function enterState(st){
 /* ---------- PASSWORD ---------- */
 function renderPassword(){
   app.innerHTML = `
+  <div class="password-pad"></div>
   <div class="card">
     <h2>Family password</h2>
     <p class="hint">Everything this game saves is scrambled with this password before it leaves your phone, so only the family can read the paper. Everyone uses the same password. If you were invited, ask whoever sent the link.</p>
@@ -451,9 +462,12 @@ function renderPassword(){
     if(pw.length < 4){ S.err='Make it at least 4 characters.'; render(); return; }
     $('#pwBtn').disabled = true; $('#pwBtn').textContent = 'Unlocking…';
     await setPassword(pw);
+    // check it against the family's games before celebrating
+    const check = await getIndex();
+    if(check==='badkey'){ forgetPassword(); S.err='That password doesn\u2019t match the family\u2019s games. Try again.'; render(); return; }
     S.err='';
+    await playIntro();
     if(S.pendingHash){ const h = S.pendingHash; S.pendingHash=null; await loadFromHash(h); return; }
-    S.screen='home'; render();
   };
   $('#pwBtn').onclick = go;
   inp.addEventListener('keydown', e=>{ if(e.key==='Enter') go(); });
@@ -463,6 +477,64 @@ function wrongPassword(){
   forgetPassword();
   S.err = 'That password doesn’t match the family’s games. Try again.';
   S.screen='password'; render();
+}
+
+/* ---------- INTRO: banner swoops in, then settles into place ---------- */
+function playIntro(){
+  return new Promise(async resolve=>{
+    const brand = document.querySelector('.brand');
+    const banner = document.querySelector('.banner');
+    brand.classList.add('intro');
+    app.classList.add('intro-hold');
+    S.screen='home'; render();
+    window.scrollTo({top:0});
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    try{ await banner.decode(); }catch(e){}
+    const finish = ()=>{
+      if(finish.done) return; finish.done = true;
+      brand.classList.remove('intro');
+      app.classList.remove('intro-hold'); app.classList.add('intro-in');
+      setTimeout(()=>app.classList.remove('intro-in'), 700);
+      overlay && overlay.remove();
+      resolve();
+    };
+    if(reduce || !banner.animate){ finish(); return; }
+
+    const t = banner.getBoundingClientRect();
+    const vw = innerWidth, vh = innerHeight;
+    // big, centered moment: fill most of the screen
+    const s = Math.min(0.94*vw/t.width, 0.78*vh/t.height);
+    const dx = vw/2 - (t.left + t.width/2);
+    const dy = vh/2 - (t.top + t.height/2);
+
+    var overlay = document.createElement('div');
+    overlay.className = 'intro-overlay';
+    const img = document.createElement('img');
+    img.className = 'intro-img';
+    img.src = banner.currentSrc || banner.src; img.alt = '';
+    Object.assign(img.style, {left:t.left+'px', top:t.top+'px', width:t.width+'px', height:t.height+'px'});
+    const hint = document.createElement('div'); hint.className='intro-skip'; hint.textContent='tap to skip';
+    overlay.append(img, hint);
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', finish);
+
+    const T = (x,y,sc,r)=>`translate(${x}px,${y}px) scale(${sc}) rotate(${r}deg)`;
+    const fly = img.animate([
+      // off the bottom-left corner, small and tilted
+      {offset:0,    transform:T(dx - vw*0.95, dy + vh*0.55, s*0.35, -24), opacity:0, filter:'blur(6px)'},
+      {offset:0.12, opacity:1},
+      // swoops up past center, overshooting
+      {offset:0.42, transform:T(dx + vw*0.06, dy - vh*0.05, s*1.08, 5), filter:'blur(0px)', easing:'cubic-bezier(.2,.7,.3,1)'},
+      // settles big in the middle
+      {offset:0.52, transform:T(dx, dy, s, 0), easing:'ease-out'},
+      {offset:0.74, transform:T(dx, dy, s, 0), easing:'cubic-bezier(.6,0,.2,1)'},
+      // drops into the banner spot
+      {offset:1,    transform:T(0, 0, 1, 0), opacity:1, filter:'blur(0px)'},
+    ], {duration:2700, easing:'cubic-bezier(.3,0,.3,1)', fill:'forwards'});
+    overlay.animate([{opacity:0},{opacity:1,offset:.12},{opacity:1,offset:.78},{opacity:0}], {duration:2700, fill:'forwards'});
+    fly.onfinish = finish;
+    setTimeout(finish, 4000); // safety net
+  });
 }
 
 /* ---------- HOME ---------- */
