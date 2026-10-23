@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>The Sentence Picture Game — Pass-It-On Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --table:#2F4A3E; --paper:#FDFBF2; --paper-shade:#F1ECDC;
+  --ink:#26324B; --ink-soft:#5A6480;
+  --marker:#6C4AB0; --marker-deep:#57399A;
+  --hi:#FFD64D; --redpen:#DE5B6D; --line:#D8D2BE; --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'Nunito',system-ui,sans-serif;color:var(--ink);
+  background:radial-gradient(1200px 700px at 50% -10%, rgba(255,255,255,.07), transparent 60%),var(--table);
+  min-height:100%;display:flex;flex-direction:column;align-items:center;padding:22px 14px 60px;
+}
+h1,h2,h3{font-family:'Shantell Sans','Comic Sans MS',cursive}
+button{font-family:inherit;cursor:pointer;border:none}
+input,textarea{font-family:inherit}
+.wrap{width:100%;max-width:560px}
+.wrap.wide{max-width:760px}
+.brand{text-align:center;color:var(--paper);margin-bottom:18px;user-select:none}
+.brand h1{font-size:clamp(26px,6vw,38px);font-weight:800;line-height:1.1}
+.brand h1 .w1{color:var(--hi)}
+.brand .sub{font-size:14px;opacity:.75;margin-top:4px;font-weight:600}
+.card{
+  background:var(--paper);border-radius:var(--radius);
+  box-shadow:0 14px 34px rgba(0,0,0,.34), 0 2px 0 rgba(255,255,255,.35) inset;
+  padding:24px 22px 26px;position:relative;
+}
+.card + .card{margin-top:16px}
+.card::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;background:var(--redpen);opacity:.28;border-radius:2px}
+.card h2{font-size:22px;font-weight:800;margin-bottom:6px}
+.card .hint{color:var(--ink-soft);font-size:14px;line-height:1.5;margin-bottom:14px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
+.field input{width:100%;padding:12px 14px;font-size:17px;font-weight:700;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:10px;outline:none}
+.field input:focus{border-color:var(--marker)}
+.btn{display:block;width:100%;padding:14px;border-radius:12px;font-size:17px;font-weight:800;background:var(--marker);color:#fff;box-shadow:0 4px 0 var(--marker-deep);transition:transform .06s,box-shadow .06s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--marker-deep)}
+.btn.alt{background:var(--paper-shade);color:var(--ink);box-shadow:0 4px 0 #d9d2ba}
+.btn.gold{background:var(--hi);color:var(--ink);box-shadow:0 4px 0 #d9b32e}
+.btn.small{width:auto;padding:9px 16px;font-size:14px;display:inline-block}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.btn + .btn{margin-top:10px}
+.divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--ink-soft);font-weight:800;font-size:12px;letter-spacing:2px}
+.divider::before,.divider::after{content:"";flex:1;height:2px;background:var(--line);border-radius:2px}
+.errmsg{color:var(--redpen);font-weight:700;font-size:14px;margin-top:10px;min-height:18px}
+.prompt-label{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--marker);margin-bottom:8px}
+.round-pill{float:right;background:var(--ink);color:var(--paper);border-radius:999px;padding:3px 12px;font-size:12px;font-weight:800}
+.prev-entry{background:#fff;border:2px dashed var(--line);border-radius:12px;padding:14px;margin-bottom:16px}
+.prev-entry .who{font-size:12px;font-weight:800;color:var(--ink-soft);margin-bottom:6px}
+.prev-entry .sentence{font-family:'Shantell Sans',cursive;font-size:20px;font-weight:700;line-height:1.35}
+.prev-entry canvas{width:100%;border-radius:8px;display:block;background:#fff}
+textarea.write{
+  width:100%;min-height:96px;resize:vertical;
+  background:repeating-linear-gradient(transparent,transparent 31px,rgba(38,50,75,.14) 31px,rgba(38,50,75,.14) 32px);
+  border:2px solid var(--line);border-radius:10px;padding:8px 14px;
+  font-family:'Shantell Sans',cursive;font-size:19px;font-weight:600;line-height:32px;color:var(--ink);outline:none;
+}
+textarea.write:focus{border-color:var(--marker)}
+textarea.paste{
+  width:100%;min-height:110px;resize:vertical;border:2px solid var(--line);border-radius:10px;
+  padding:10px 12px;font-size:13px;font-weight:600;color:var(--ink);outline:none;word-break:break-all;
+}
+textarea.paste:focus{border-color:var(--marker)}
+.charcount{text-align:right;font-size:12px;color:var(--ink-soft);font-weight:700;margin:4px 2px 12px}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}
+.swatch{width:32px;height:32px;border-radius:50%;border:3px solid transparent;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.swatch.sel{border-color:var(--ink);transform:scale(1.12)}
+.sizebtn{width:36px;height:32px;border-radius:8px;background:#fff;border:2px solid var(--line);display:flex;align-items:center;justify-content:center}
+.sizebtn.sel{border-color:var(--marker);background:#F2ECFC}
+.sizebtn span{border-radius:50%;background:var(--ink);display:block}
+.tool{height:32px;padding:0 12px;border-radius:8px;background:#fff;border:2px solid var(--line);font-weight:800;font-size:13px;color:var(--ink)}
+.tool.sel{border-color:var(--marker);background:#F2ECFC}
+.canvas-holder{border:2px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;touch-action:none;overscroll-behavior:contain}
+canvas#pad{display:block;width:100%;height:auto;touch-action:none;-webkit-user-select:none;user-select:none}
+.passbox{background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px;margin-bottom:14px;max-height:150px;overflow:auto;font-size:12px;font-weight:600;word-break:break-all;color:var(--ink-soft)}
+.bigcheck{text-align:center;font-size:52px;margin:4px 0 10px}
+.tabsrow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.strip{perspective:1200px}
+.panel{background:var(--paper);padding:16px 18px;border-bottom:2px dashed rgba(38,50,75,.22);transform-origin:top center;animation:unfold .55s cubic-bezier(.34,1.3,.5,1) both}
+.panel:first-child{border-radius:var(--radius) var(--radius) 0 0}
+.panel .who{font-size:12px;font-weight:800;letter-spacing:1px;color:var(--marker);text-transform:uppercase;margin-bottom:6px}
+.panel .sentence{font-family:'Shantell Sans',cursive;font-size:20px;font-weight:700;line-height:1.35}
+.panel canvas{width:100%;border-radius:8px;display:block;background:#fff}
+@keyframes unfold{from{transform:rotateX(-88deg);opacity:0;box-shadow:0 30px 40px rgba(0,0,0,.4)}to{transform:rotateX(0);opacity:1;box-shadow:none}}
+@media (prefers-reduced-motion: reduce){.panel{animation:none}}
+.foldbtn{width:100%;padding:15px;border-radius:0 0 var(--radius) var(--radius);background:var(--hi);color:var(--ink);font-family:'Shantell Sans',cursive;font-size:17px;font-weight:800;box-shadow:0 10px 24px rgba(0,0,0,.3)}
+.strip-shadowbox{border-radius:var(--radius);box-shadow:0 14px 34px rgba(0,0,0,.34);overflow:hidden}
+.reveal-actions{margin-top:18px}
+footer{margin-top:26px;color:rgba(255,255,255,.45);font-size:12px;font-weight:700;text-align:center;max-width:560px}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+
+<div class="brand">
+  <h1><span class="w1">Sentence</span> ✦ Picture</h1>
+  <div class="sub">write it · draw it · pass it · giggle</div>
+</div>
+
+<div class="wrap" id="app"></div>
+
+<footer>Pass-It-On Edition — no accounts, no sign-ups. The whole game travels inside the message you pass along, just like the folded paper.</footer>
+
+<script>
+/* =====================================================
+   Sentence Picture Game — RELAY EDITION
+   No storage, no server. Game state is compressed into
+   a code that players pass along via text message.
+===================================================== */
+const $ = s => document.querySelector(s);
+const app = $('#app');
+const W = 1000, H = 750;              // drawing coordinate space
+const COLORS = ['#26324B','#6C4AB0','#DE5B6D','#2E8B57','#E8862E','#2B7BC4','#C9A227','#8B5A3C','#EC7FB4','#2AA9A0'];
+const SIZES = [2,5,10,20];
+
+const S = { screen:'home', state:null, myName:'', err:'', revealShown:1 };
+
+/* ---------- pack / unpack ---------- */
+function b64url(bytes){
+  let bin=''; for(let i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function unb64url(str){
+  str = str.replace(/-/g,'+').replace(/_/g,'/');
+  while(str.length % 4) str += '=';
+  const bin = atob(str);
+  const bytes = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+  return bytes;
+}
+async function packState(state){
+  const bytes = new TextEncoder().encode(JSON.stringify(state));
+  if(typeof CompressionStream !== 'undefined'){
+    try{
+      const buf = await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer();
+      return 'SPG1.' + b64url(new Uint8Array(buf));
+    }catch(e){}
+  }
+  return 'SPG0.' + b64url(bytes);
+}
+async function unpackState(text){
+  text = text || '';
+  const candidates = [];
+  const strict = text.match(/SPG([01])\.([A-Za-z0-9_\-]+)/);
+  if(strict) candidates.push([strict[1], strict[2]]);
+  // fallback: some apps wrap long messages with line breaks mid-code —
+  // take everything after the marker and strip whitespace
+  const loose = text.match(/SPG([01])\.([\s\S]+)$/);
+  if(loose) candidates.push([loose[1], loose[2].replace(/[^A-Za-z0-9_\-]/g,'')]);
+  for(const [ver, body] of candidates){
+    try{
+      const bytes = unb64url(body);
+      let json;
+      if(ver==='1'){
+        const buf = await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();
+        json = new TextDecoder().decode(buf);
+      } else {
+        json = new TextDecoder().decode(bytes);
+      }
+      const st = JSON.parse(json);
+      if(st && Array.isArray(st.entries)) return st;
+    }catch(e){}
+  }
+  return null;
+}
+
+/* ---------- helpers ---------- */
+function esc(str){ const d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
+function safeImg(src){ return (typeof src==='string' && src.startsWith('data:image/')) ? src : ''; }
+
+/* ---------- cloud pass storage ----------
+   PRIMARY: Pantry (getpantry.cloud) — YOUR private JSON storage.
+   >>> ONE-TIME SETUP: visit https://getpantry.cloud , tap "Create a Pantry",
+   >>> copy your Pantry ID, and paste it between the quotes below. <<<
+   FALLBACK: JSONBlob (public service) if no Pantry ID is set. */
+const PANTRY_ID = 'PASTE_YOUR_PANTRY_ID_HERE';
+const usePantry = /^[A-Za-z0-9\-]{20,}$/.test(PANTRY_ID);
+const BLOB_API = 'https://jsonblob.com/api/jsonBlob';
+function pantryUrl(id){ return 'https://getpantry.cloud/apiv1/pantry/' + PANTRY_ID + '/basket/spg' + id; }
+function randId(){ let s=''; const A='abcdefghjkmnpqrstuvwxyz23456789'; for(let i=0;i<12;i++) s+=A[Math.floor(Math.random()*A.length)]; return s; }
+
+async function storeState(state){
+  if(usePantry){
+    const id = randId();
+    try{
+      const resp = await fetch(pantryUrl(id), {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(state)
+      });
+      if(resp.ok) return id;
+    }catch(e){}
+    return null;
+  }
+  try{
+    const resp = await fetch(BLOB_API, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify(state)
+    });
+    if(!resp.ok) return null;
+    const loc = resp.headers.get('Location') || resp.headers.get('X-jsonblob-id') || resp.headers.get('X-Jsonblob');
+    if(!loc) return null;
+    const id = loc.split('/').pop();
+    return id && id.length > 5 ? id : null;
+  }catch(e){ return null; }
+}
+async function fetchState(id){
+  if(usePantry){
+    try{
+      const resp = await fetch(pantryUrl(id));
+      if(resp.ok){
+        const st = await resp.json();
+        if(st && Array.isArray(st.entries)) return st;
+      }
+    }catch(e){}
+    // fall through to JSONBlob in case this id predates the Pantry switch
+  }
+  try{
+    const resp = await fetch(BLOB_API + '/' + encodeURIComponent(id), {headers:{'Accept':'application/json'}});
+    if(!resp.ok) return null;
+    const st = await resp.json();
+    return (st && Array.isArray(st.entries)) ? st : null;
+  }catch(e){ return null; }
+}
+async function putState(id, state){
+  if(usePantry){
+    try{
+      // POST replaces the whole basket (PUT would merge, which corrupts the entries list)
+      const resp = await fetch(pantryUrl(id), {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(state)
+      });
+      if(resp.ok) return true;
+    }catch(e){}
+  }
+  try{
+    const resp = await fetch(BLOB_API + '/' + encodeURIComponent(id), {
+      method:'PUT',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify(state)
+    });
+    return resp.ok;
+  }catch(e){ return false; }
+}
+/* this device remembers the family's game so no links or pasting are needed */
+function saveLocalRoom(){
+  if(!S.state || !S.state.room) return;
+  try{ localStorage.setItem('spgRoom', JSON.stringify({id:S.state.room, name:S.myName||''})); }catch(e){}
+}
+function localRoom(){
+  try{ return JSON.parse(localStorage.getItem('spgRoom')||'null'); }catch(e){ return null; }
+}
+function clearLocalRoom(){ try{ localStorage.removeItem('spgRoom'); }catch(e){} }
+/* Accepts: full pass message, SPG code, short link with #g=ID, link-free SPGB code, or bare blob id */
+async function resolveInput(text){
+  text = (text||'').trim();
+  const inline = await unpackState(text);
+  if(inline) return inline;
+  const b = text.match(/SPGB\.([A-Za-z0-9\-]+?)(\.R)?(?![A-Za-z0-9\-])/);
+  if(b){
+    const st = await fetchState(b[1]);
+    if(st){ if(b[2]) st.done = true; return st; }
+    return 'fetchfail';
+  }
+  const g = text.match(/[#&?]g=([A-Za-z0-9\-]+)(?:&(r)=1)?/);
+  if(g){
+    const st = await fetchState(g[1]);
+    if(st){ if(g[2]) st.done = true; return st; }
+    return 'fetchfail';
+  }
+  return null;
+}
+function lastEntry(){ return S.state.entries[S.state.entries.length-1]; }
+function nextIsDrawing(){ return lastEntry().t === 's'; }
+function foldNum(){ return S.state.entries.length + 1; }
+
+/* Render stored strokes onto a canvas element */
+function paintStrokes(canvas, strokes){
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+  ctx.lineCap='round'; ctx.lineJoin='round';
+  for(const s of strokes){
+    ctx.globalAlpha = s.h ? 0.35 : 1;
+    ctx.strokeStyle = s.e ? '#fff' : (COLORS[s.c]||COLORS[0]);
+    const base = SIZES[s.w]||5;
+    ctx.lineWidth = s.e ? base*3 : (s.h ? base*2.5 : base);
+    ctx.beginPath();
+    const p = s.p;
+    for(let i=0;i<p.length;i+=2){
+      if(i===0) ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[i],p[i+1]);
+    }
+    if(p.length===2) ctx.lineTo(p[0]+.1,p[1]+.1);
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+}
+function drawingHtml(entry){
+  if(entry.c && entry.c.img) return `<img src="${safeImg(entry.c.img)}" alt="drawing" style="width:100%;border-radius:8px;display:block;background:#fff">`;
+  return `<canvas></canvas>`;
+}
+function hydrateDrawing(container, entry){
+  const cv = container.querySelector('canvas');
+  if(cv) paintStrokes(cv, (entry.c && entry.c.s) || []);
+}
+function renderPrevEntry(container){
+  const prev = lastEntry();
+  if(prev.t==='s'){
+    container.innerHTML = `<div class="who">${esc(prev.a)} wrote:</div><div class="sentence">“${esc(prev.c)}”</div>`;
+  } else {
+    container.innerHTML = `<div class="who">${esc(prev.a)} drew:</div>` + drawingHtml(prev);
+    hydrateDrawing(container, prev);
+  }
+}
+
+/* =====================================================
+   SCREENS
+===================================================== */
+let lastScreen = null;
+function render(){
+  app.classList.toggle('wide', S.screen==='draw' || S.screen==='reveal');
+  ({home:renderHome, write:renderWrite, draw:renderDraw, pass:renderPass, reveal:renderReveal})[S.screen]();
+  if(S.screen !== lastScreen) window.scrollTo({top:0});
+  lastScreen = S.screen;
+}
+
+/* ---------- HOME ---------- */
+function renderHome(){
+  const lr = localRoom();
+  app.innerHTML = `
+  ${lr ? `<div class="card" style="margin-bottom:16px">
+    <h2>Your family game 📄</h2>
+    <p class="hint">This phone remembers the game${lr.name?` (you're ${esc(lr.name)})`:''}. No links, no pasting — just check the paper.</p>
+    <button class="btn gold" id="checkBtn">📄 Check the paper</button>
+    <button class="btn small alt" id="forgetBtn" style="margin-top:10px">Forget this game</button>
+  </div>`:''}
+  <div class="card">
+    <h2>Got a pass-along message?</h2>
+    <p class="hint">Paste the whole text (or just the game code) below to take your turn or unfold a finished game.</p>
+    <div class="field">
+      <textarea class="paste" id="codeIn" placeholder="Paste it all right here…"></textarea>
+    </div>
+    <button class="btn" id="continueBtn">Take my turn ➜</button>
+    <div class="divider">OR</div>
+    <h2>Start a new game</h2>
+    <p class="hint">You write the first sentence, then pass the paper on. It becomes a drawing, then a sentence, then a drawing…</p>
+    <div class="field">
+      <label for="nameNew">Your name</label>
+      <input id="nameNew" maxlength="16" placeholder="e.g. Robert" autocomplete="off">
+    </div>
+    <button class="btn alt" id="startBtn">Write the first sentence ➜</button>
+    <div class="errmsg">${esc(S.err)}</div>
+  </div>`;
+  if($('#checkBtn')) $('#checkBtn').onclick = async ()=>{
+    const lr2 = localRoom(); if(!lr2) return;
+    $('#checkBtn').textContent = 'Checking…';
+    const st = await fetchState(lr2.id);
+    if(!st){ S.err='Couldn\u2019t reach the paper — check your connection and try again.'; render(); return; }
+    S.err=''; S.state = st;
+    if(lr2.name && !S.myName) S.myName = lr2.name;
+    S.screen = st.done ? 'reveal' : (nextIsDrawing() ? 'draw' : 'write');
+    S.revealShown = 1; render();
+  };
+  if($('#forgetBtn')) $('#forgetBtn').onclick = ()=>{ clearLocalRoom(); render(); };
+  $('#continueBtn').onclick = ()=> loadFromInput($('#codeIn').value);
+  $('#startBtn').onclick = ()=>{
+    const name = $('#nameNew').value.trim();
+    if(!name){ S.err='Give us a name first!'; render(); return; }
+    S.err=''; S.myName=name; S.state={v:1, entries:[]};
+    if(/^https?:$/.test(location.protocol)) S.state.u = location.href.split('#')[0];
+    S.screen='write'; render();
+  };
+  // auto-load if a game rode along in the link (short g= link or full SPG code)
+  let hash = location.hash || '';
+  try{ if(!/SPG|g=/.test(hash) && window.top !== window) hash = window.top.location.hash || hash; }catch(e){}
+  if(/SPG|g=/.test(hash)){
+    resolveInput(decodeURIComponent(hash)).then(st=>{
+      if(st && st!=='fetchfail'){
+        S.state=st; saveLocalRoom();
+        S.screen = st.done ? 'reveal' : (nextIsDrawing()?'draw':'write'); S.revealShown=1; render();
+      } else if(st==='fetchfail'){
+        S.err='This link\u2019s fold couldn\u2019t be loaded \u2014 check your connection and refresh, or ask the sender for the backup full-text code.';
+        render();
+      }
+    });
+  }
+}
+
+/* ---------- name field (shared by write & draw) ---------- */
+function nameFieldHtml(){
+  return `<div class="field">
+    <label for="myName">Your name</label>
+    <input id="myName" maxlength="16" placeholder="Who's holding the paper?" autocomplete="off" value="${esc(S.myName)}">
+  </div>`;
+}
+function grabName(){
+  const el = $('#myName');
+  if(el) S.myName = el.value.trim();
+  return S.myName;
+}
+
+/* ---------- WRITE ---------- */
+function renderWrite(){
+  const first = S.state.entries.length===0;
+  app.innerHTML = `
+  <div class="card">
+    <span class="round-pill">fold ${foldNum()}</span>
+    <div class="prompt-label">${first ? 'Start the strip' : 'What is going on in this picture?'}</div>
+    ${first
+      ? `<p class="hint">Write any sentence — the weirder, the better. The next person has to draw it.</p>`
+      : `<div class="prev-entry" id="prev"></div>
+         <p class="hint">Describe it in one sentence. Only the last fold is shown — no peeking further back!</p>`}
+    <textarea class="write" id="sentence" maxlength="140" placeholder="${first?'Once upon a Tuesday, a llama learned to parallel park…':'I see…'}"></textarea>
+    <div class="charcount"><span id="cc">0</span>/140</div>
+    ${first ? '' : nameFieldHtml()}
+    <button class="btn" id="passBtn">Fold it ➜</button>
+    <div class="errmsg">${esc(S.err)}</div>
+  </div>`;
+  if(!first) renderPrevEntry($('#prev'));
+  const ta = $('#sentence');
+  ta.addEventListener('input', ()=> $('#cc').textContent = ta.value.length);
+  $('#passBtn').onclick = async ()=>{
+    const text = ta.value.trim();
+    const name = S.state.entries.length===0 ? S.myName : grabName();
+    if(!name){ S.err='Add your name so the family knows who to blame.'; render(); return; }
+    if(!text){ S.err='Write something first — anything!'; render(); return; }
+    S.err='';
+    S.state.entries.push({t:'s', a:name, c:text});
+    await gotoPass();
+  };
+}
+
+/* ---------- DRAW ---------- */
+function renderDraw(){
+  app.innerHTML = `
+  <div class="card">
+    <span class="round-pill">fold ${foldNum()}</span>
+    <div class="prompt-label">Draw this sentence</div>
+    <div class="prev-entry" id="prev"></div>
+    <div class="toolbar" id="tools"></div>
+    <div class="canvas-holder"><canvas id="pad" width="${W}" height="${H}"></canvas></div>
+    <div style="height:12px"></div>
+    ${nameFieldHtml()}
+    <button class="btn" id="passBtn">Fold it ➜</button>
+    <div class="errmsg">${esc(S.err)}</div>
+  </div>`;
+  renderPrevEntry($('#prev'));
+  const pad = makePad($('#pad'), $('#tools'));
+  $('#passBtn').onclick = async ()=>{
+    const name = grabName();
+    if(!name){ S.err='Add your name so the family knows who to blame.'; render(); return; }
+    if(pad.isBlank()){ S.err='A blank page? Give us at least a squiggle!'; render(); return; }
+    S.err='';
+    S.state.entries.push({t:'d', a:name, c: pad.exportContent()});
+    await gotoPass();
+  };
+}
+
+function makePad(canvas, toolsEl){
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+  ctx.lineCap='round'; ctx.lineJoin='round';
+  let colorIdx=0, sizeIdx=1, erasing=false, hiliting=false;
+  let strokes=[], current=null, bgImg=null;
+
+  const fileInput = document.createElement('input');
+  fileInput.type='file'; fileInput.accept='image/*'; fileInput.style.display='none';
+  canvas.parentNode.appendChild(fileInput);
+  fileInput.addEventListener('change', ()=>{
+    const f = fileInput.files && fileInput.files[0];
+    if(!f) return;
+    const img = new Image();
+    img.onload = ()=>{ bgImg = img; redraw(); buildTools(); };
+    img.src = URL.createObjectURL(f);
+    fileInput.value='';
+  });
+
+  function buildTools(){
+    toolsEl.innerHTML = COLORS.map((c,i)=>
+      `<button class="swatch ${i===colorIdx&&!erasing&&!hiliting?'sel':''}" data-i="${i}" style="background:${c}" aria-label="color"></button>`).join('')
+      + SIZES.map((s,i)=>
+      `<button class="sizebtn ${i===sizeIdx?'sel':''}" data-i="${i}" aria-label="brush size"><span style="width:${Math.min(s+3,20)}px;height:${Math.min(s+3,20)}px"></span></button>`).join('')
+      + `<button class="tool ${hiliting?'sel':''}" id="hilite">Hi-liter</button>
+         <button class="tool ${erasing?'sel':''}" id="eraser">Eraser</button>
+         <button class="tool" id="undo">Undo</button>
+         <button class="tool" id="clear">Clear</button>
+         <button class="tool" id="addphoto">${bgImg?'📷 Swap photo':'📷 Add photo'}</button>`;
+    toolsEl.querySelectorAll('.swatch').forEach(b=>b.onclick=()=>{colorIdx=+b.dataset.i;erasing=false;buildTools();});
+    toolsEl.querySelectorAll('.sizebtn').forEach(b=>b.onclick=()=>{sizeIdx=+b.dataset.i;buildTools();});
+    $('#hilite').onclick=()=>{hiliting=!hiliting;erasing=false;buildTools();};
+    $('#eraser').onclick=()=>{erasing=!erasing;hiliting=false;buildTools();};
+    $('#undo').onclick=()=>{strokes.pop();redraw();};
+    $('#clear').onclick=()=>{strokes=[];bgImg=null;redraw();buildTools();};
+    $('#addphoto').onclick=()=>fileInput.click();
+  }
+  buildTools();
+
+  function pos(ev){
+    const r = canvas.getBoundingClientRect();
+    return { x:(ev.clientX-r.left)*W/r.width, y:(ev.clientY-r.top)*H/r.height };
+  }
+  function drawBg(){
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+    if(bgImg){
+      const sc = Math.min(W/bgImg.width, H/bgImg.height);
+      const dw = bgImg.width*sc, dh = bgImg.height*sc;
+      ctx.drawImage(bgImg, (W-dw)/2, (H-dh)/2, dw, dh);
+    }
+  }
+  function redraw(){
+    drawBg();
+    for(const s of strokes) paintLive(s);
+  }
+  function paintLive(s){
+    ctx.globalAlpha = s.h ? 0.35 : 1;
+    ctx.strokeStyle = s.e ? '#fff' : COLORS[s.c];
+    const base = SIZES[s.w];
+    ctx.lineWidth = s.e ? base*3 : (s.h ? base*2.5 : base);
+    ctx.beginPath();
+    s.pts.forEach((p,i)=> i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
+    if(s.pts.length===1) ctx.lineTo(s.pts[0].x+.1,s.pts[0].y+.1);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  canvas.addEventListener('touchstart', ev=>ev.preventDefault(), {passive:false});
+  canvas.addEventListener('touchmove', ev=>ev.preventDefault(), {passive:false});
+  canvas.addEventListener('pointerdown', ev=>{
+    canvas.setPointerCapture(ev.pointerId);
+    current={c:colorIdx,w:sizeIdx,e:erasing?1:0,h:hiliting?1:0,pts:[pos(ev)]};
+    strokes.push(current); paintLive(current);
+  });
+  canvas.addEventListener('pointermove', ev=>{
+    if(!current) return;
+    const p = pos(ev);
+    const lp = current.pts[current.pts.length-1];
+    if(Math.hypot(p.x-lp.x, p.y-lp.y) >= 2) { current.pts.push(p); redraw(); }
+  });
+  const up=()=>{ current=null; };
+  canvas.addEventListener('pointerup',up);
+  canvas.addEventListener('pointercancel',up);
+
+  return {
+    isBlank: ()=> strokes.length===0 && !bgImg,
+    exportContent: ()=>{
+      if(bgImg){
+        redraw(); // ensure photo + ink are painted
+        return { img: canvas.toDataURL('image/jpeg', 0.55) };
+      }
+      return { s: strokes.map(s=>({
+        c:s.c, w:s.w, e:s.e, h:s.h,
+        p: thin(s.pts).flatMap(p=>[Math.round(p.x), Math.round(p.y)])
+      })) };
+    },
+  };
+  /* drop points closer than 2.5px to keep codes small */
+  function thin(pts){
+    if(pts.length<3) return pts;
+    const out=[pts[0]];
+    for(let i=1;i<pts.length-1;i++){
+      const l=out[out.length-1];
+      if(Math.hypot(pts[i].x-l.x, pts[i].y-l.y) >= 2.5) out.push(pts[i]);
+    }
+    out.push(pts[pts.length-1]);
+    return out;
+  }
+}
+
+/* ---------- PASS ---------- */
+let passCode='', revealCode='', blobId=null;
+async function gotoPass(){
+  S.screen='pass'; S.passReady=false; render();
+  if(S.state.room){
+    // someone may have taken this fold while we were drawing — check first
+    const latest = await fetchState(S.state.room);
+    if(latest && latest.entries.length !== S.state.entries.length - 1){
+      S.state = latest;
+      S.err = 'Whoops — someone else already added fold ' + latest.entries.length + ' while you were working. Here\u2019s the newest fold instead.';
+      S.screen = latest.done ? 'reveal' : (nextIsDrawing() ? 'draw' : 'write');
+      S.revealShown = 1; render(); return;
+    }
+    const ok = await putState(S.state.room, S.state);
+    blobId = ok ? S.state.room : null;
+  } else {
+    blobId = await storeState(S.state);
+    if(blobId){
+      S.state.room = blobId;
+      await putState(blobId, S.state);   // re-save with the room id inside
+    }
+  }
+  saveLocalRoom();
+  passCode = await packState(S.state);
+  revealCode = await packState({...S.state, done:true});
+  S.passReady=true; render();
+}
+function gameLink(tail){
+  if(!S.state.u) return '';
+  return S.state.u.split('#')[0] + '#' + tail;
+}
+function passMessage(forceLong){
+  const n = S.state.entries.length;
+  if(S.state.room && blobId && !forceLong){
+    const link = S.state.u ? '\nFirst time playing? Tap: ' + gameLink('g='+S.state.room) : '';
+    return `\u{1F3A8} Sentence Picture Game \u2014 fold ${n} is done and it\u2019s YOUR turn! Open the game and tap \u201CCheck the paper\u201D.${link}`;
+  }
+  const link = gameLink(passCode);
+  if(link && !forceLong){
+    return `\u{1F3A8} Sentence Picture Game \u2014 fold ${n} is done and it\u2019s YOUR turn! Tap here:\n${link}\n\n(If your turn doesn\u2019t load automatically, copy this whole message, open the game, and paste it in the box.)`;
+  }
+  return `\u{1F3A8} Sentence Picture Game \u2014 fold ${n} is done and it\u2019s YOUR turn!\n`
+    + `1. Open the game (same link we\u2019ve been using)\n`
+    + `2. Copy this WHOLE message\n`
+    + `3. Paste it in the box and tap \u201CTake my turn\u201D\n\n`
+    + passCode;
+}
+async function markDoneEverywhere(){
+  S.state.done = true;
+  if(S.state.room) await putState(S.state.room, S.state);
+}
+function passMessageNoLink(){
+  return `\u{1F3A8} Sentence Picture Game \u2014 fold ${S.state.entries.length} is done and it\u2019s YOUR turn! Open the game and paste this code:\n\nSPGB.${blobId}`;
+}
+function revealMessageNoLink(){
+  return `\u{1F4DC} Sentence Picture Game \u2014 the paper is FULL! Open the game and paste this code to unfold everything:\n\nSPGB.${blobId}.R`;
+}
+function revealMessage(forceLong){
+  if(S.state.room && blobId && !forceLong){
+    const link = S.state.u ? '\nFirst time? Tap: ' + gameLink('g='+S.state.room+'&r=1') : '';
+    return `\u{1F4DC} Sentence Picture Game \u2014 the paper is FULL! Open the game and tap \u201CCheck the paper\u201D to unfold everything.${link}`;
+  }
+  if(blobId && S.state.u && !forceLong){
+    return `\u{1F4DC} Sentence Picture Game \u2014 the paper is FULL! Tap to unfold everything:\n${gameLink('g='+blobId+'&r=1')}`;
+  }
+  const link = gameLink(revealCode);
+  if(link && !forceLong){
+    return `\u{1F4DC} Sentence Picture Game \u2014 the paper is FULL! Tap to unfold everything:\n${link}\n\n(If it doesn\u2019t unfold automatically, copy this whole message, open the game, and paste it in the box.)`;
+  }
+  return `\u{1F4DC} Sentence Picture Game \u2014 the paper is FULL! Open the game, paste this whole message, and unfold everything:\n\n`
+    + revealCode;
+}
+async function shareText(text, btn, doneLabel){
+  if(navigator.share){
+    try{ await navigator.share({text}); return; }
+    catch(e){ if(e && e.name==='AbortError') return; }
+  }
+  try{
+    await navigator.clipboard.writeText(text);
+    const old = btn.textContent;
+    btn.textContent = doneLabel;
+    setTimeout(()=>{ btn.textContent = old; }, 2500);
+  }catch(e){
+    S.err='Couldn\u2019t open the share sheet — long-press the code box to copy it manually.';
+    render();
+  }
+}
+function renderPass(){
+  const n = S.state.entries.length;
+  const nextTask = nextIsDrawing() ? 'draw your sentence' : 'caption your drawing';
+  if(!S.passReady){
+    app.innerHTML = `<div class="card"><div class="bigcheck">📬</div>
+      <h2 style="text-align:center">Folding it up…</h2>
+      <p class="hint" style="text-align:center;margin:0">Packing fold ${n} into a nice short link.</p></div>`;
+    return;
+  }
+  app.innerHTML = `
+  <div class="card">
+    <div class="bigcheck">📬</div>
+    <h2 style="text-align:center">Fold ${n} is in!</h2>
+    <p class="hint" style="text-align:center">Now pass the paper: send this to the next player, and they'll ${nextTask}. ${n>=2?'Or if the paper feels full, reveal it instead.':''}</p>
+    <button class="btn" id="shareTurn">📨 Send to the next player</button>
+    ${blobId ? `<button class="btn alt" id="shareTurnNL">✂️ Send without a link (short code only)</button>`:''}
+    ${n>=2 ? `<button class="btn gold" id="shareReveal">📜 We're done — send the big reveal to everyone</button>
+    ${blobId ? `<button class="btn alt" id="shareRevealNL">📜 Reveal without a link (code only)</button>`:''}
+    <button class="btn alt" id="revealNow">👀 Unfold it right here</button>`:''}
+    ${blobId ? '' : `<p class="hint" style="margin-top:10px">⚠️ Couldn't reach the short-link service, so the message contains the full game code — longer, but it works the same.</p>`}
+    <div class="divider">THE MESSAGE</div>
+    <p class="hint">If sharing misbehaves, long-press below, Select All, copy, and text it yourself:</p>
+    <div class="passbox" id="rawmsg"></div>
+    ${blobId ? `<button class="btn small alt" id="longCode">Send as full-text code instead (backup)</button>`:''}
+    <div class="divider">GOT THE NEXT FOLD ALREADY?</div>
+    <p class="hint">If someone passed the paper back to you, paste their message or link here:</p>
+    <div class="field"><textarea class="paste" id="nextIn" placeholder="Paste the pass-along message…"></textarea></div>
+    <button class="btn alt" id="takeNext">Take my turn ➜</button>
+    <div class="errmsg">${esc(S.err)}</div>
+  </div>`;
+  $('#rawmsg').textContent = passMessage();
+  $('#shareTurn').onclick = e => shareText(passMessage(), e.target, '✅ Copied — paste it in a text');
+  if($('#shareTurnNL')) $('#shareTurnNL').onclick = e => shareText(passMessageNoLink(), e.target, '✅ Copied — paste it in a text');
+  if($('#shareReveal')) $('#shareReveal').onclick = async e => { await markDoneEverywhere(); shareText(revealMessage(), e.target, '✅ Copied — paste it in the group text'); };
+  if($('#shareRevealNL')) $('#shareRevealNL').onclick = async e => { await markDoneEverywhere(); shareText(revealMessageNoLink(), e.target, '✅ Copied — paste it in the group text'); };
+  if($('#revealNow')) $('#revealNow').onclick = async ()=>{ await markDoneEverywhere(); S.screen='reveal'; S.revealShown=1; render(); };
+  if($('#longCode')) $('#longCode').onclick = e => shareText(passMessage(true), e.target, '✅ Copied full code');
+  $('#takeNext').onclick = ()=> loadFromInput($('#nextIn').value);
+}
+async function loadFromInput(text){
+  const st = await resolveInput(text);
+  if(st==='fetchfail'){ S.err='Found the link but couldn\u2019t load the fold — check your connection, or ask the sender to use the backup full-text code.'; render(); return; }
+  if(!st){ S.err='Hmm, that doesn\u2019t look like a game message. Paste the whole thing.'; render(); return; }
+  S.err=''; S.state = st;
+  saveLocalRoom();
+  S.screen = st.done ? 'reveal' : (nextIsDrawing() ? 'draw' : 'write');
+  S.revealShown = 1;
+  render();
+}
+
+/* ---------- REVEAL ---------- */
+function renderReveal(){
+  const entries = S.state.entries;
+  const n = entries.length;
+  let panels='';
+  for(let i=0;i<Math.min(S.revealShown,n);i++){
+    const e = entries[i];
+    panels += `<div class="panel" data-p="${i}">
+      <div class="who">${esc(e.a)} ${e.t==='s'?'wrote':'drew'}</div>
+      ${e.t==='s' ? `<div class="sentence">“${esc(e.c)}”</div>` : drawingHtml(e)}
+    </div>`;
+  }
+  const done = S.revealShown >= n;
+  app.innerHTML = `
+  <div class="strip-shadowbox"><div class="strip">${panels}
+    ${done?'':`<button class="foldbtn" id="unfoldBtn">Unfold the next one 👇</button>`}
+  </div></div>
+  <div class="reveal-actions">
+    ${done ? `<button class="btn gold" id="shareReveal2">📜 Send this reveal to the family</button>
+    <button class="btn alt" id="againBtn">Start a new game</button>`:''}
+  </div>`;
+  app.querySelectorAll('.panel[data-p]').forEach(pn=>{
+    const e = entries[+pn.dataset.p];
+    if(e.t==='d') hydrateDrawing(pn, e);
+  });
+  if($('#unfoldBtn')) $('#unfoldBtn').onclick = ()=>{
+    S.revealShown++; render();
+    const panels = app.querySelectorAll('.panel');
+    const newest = panels[panels.length-1];
+    if(newest) setTimeout(()=> newest.scrollIntoView({behavior:'smooth', block:'nearest'}), 60);
+  };
+  if($('#shareReveal2')) $('#shareReveal2').onclick = async e=>{
+    if(!blobId) blobId = await storeState({...S.state, done:true});
+    if(blobId && S.state.u){
+      shareText(`\u{1F4DC} Sentence Picture Game \u2014 the paper is FULL! Tap to unfold everything:\n${gameLink('g='+blobId+'&r=1')}`, e.target, '✅ Copied — paste it in the group text');
+    } else {
+      revealCode = revealCode || await packState({...S.state, done:true});
+      shareText(revealMessage(), e.target, '✅ Copied — paste it in the group text');
+    }
+  };
+  if($('#againBtn')) $('#againBtn').onclick = ()=>{ S.state=null; S.screen='home'; S.err=''; blobId=null; render(); };
+}
+
+/* ---------- boot ---------- */
+render();
+</script>
+</body>
+</html>
