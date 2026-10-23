@@ -350,16 +350,29 @@ async function unpackState(text){
 /* ---------- Pantry storage ---------- */
 function pantryUrl(basket){ return PANTRY_BASE + PANTRY_ID + '/basket/' + basket; }
 function randId(){ let s=''; const A='abcdefghjkmnpqrstuvwxyz23456789'; for(let i=0;i<12;i++) s+=A[Math.floor(Math.random()*A.length)]; return s; }
+/* last network outcome, so the screen can say WHY a save or load failed */
+let lastNet = {ok:true, what:''};
+function noteNet(ok, what){ lastNet = {ok, what}; }
 async function basketGet(b){
   if(!usePantry) return null;
-  try{ const r = await fetch(pantryUrl(b), {cache:'no-store'}); if(!r.ok) return null; return await r.json(); }catch(e){ return null; }
+  try{
+    const r = await fetch(pantryUrl(b), {cache:'no-store'});
+    if(r.ok){ noteNet(true,''); return await r.json(); }
+    const txt = (await r.text().catch(()=>'')).slice(0,120);
+    if(r.status===400 && /not\s*found|does not exist|no basket/i.test(txt)){ noteNet(true,''); return null; }
+    noteNet(false, 'the lake answered ' + r.status + (txt?': '+txt:''));
+    return null;
+  }catch(e){ noteNet(false, 'this network is blocking the lake (' + (e && e.message ? e.message : 'no response') + ')'); return null; }
 }
 async function basketPost(b, obj){
   if(!usePantry) return false;
   try{
     const r = await fetch(pantryUrl(b), {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(obj)});
-    return r.ok;
-  }catch(e){ return false; }
+    if(r.ok){ noteNet(true,''); return true; }
+    const txt = (await r.text().catch(()=>'')).slice(0,120);
+    noteNet(false, 'the lake answered ' + r.status + (txt?': '+txt:''));
+    return false;
+  }catch(e){ noteNet(false, 'this network is blocking the lake (' + (e && e.message ? e.message : 'no response') + ')'); return false; }
 }
 async function storeState(state){
   const id = randId();
@@ -559,6 +572,12 @@ async function loadHome(){
   const games = await getIndex();
   if(!$('#paperHint')) return; // navigated away
   if(games==='badkey'){ wrongPassword(); return; }
+  if(!lastNet.ok){
+    hint.innerHTML = `<b>Can\u2019t reach the lake right now.</b> ${esc(lastNet.what)}.<br>In-flight and hotel wifi usually cause this. Try again on cellular or home wifi.`;
+    btn.textContent='Try again'; btn.disabled=false; btn.onclick=()=>render();
+    list.textContent='Past games will show up once the lake is reachable.';
+    return;
+  }
   S.index = games;
   const lr = localRoom();
   let active = games.find(g=>g.id===lr && !g.done) || games.find(g=>!g.done) || null;
@@ -874,7 +893,7 @@ function renderPass(){
     <h2 style="text-align:center">Fold ${n} is in</h2>
     <p class="hint" style="text-align:center">${saved
       ? `The paper is saved. Nudge the next player: they open the game, tap <b>Check the paper</b>, and ${nextTask}.`
-      : `<b>Heads up:</b> the paper couldn’t be saved to the lake (no connection?). Use the full-text code below so this fold isn’t lost.`}</p>
+      : `<b>Heads up:</b> the paper couldn’t be saved to the lake. Use the full-text code below so this fold isn’t lost.<br><span style="font-size:12px">Why: ${esc(lastNet.what || 'unknown')}. In-flight and hotel wifi usually cause this; it works again on cellular or home wifi.</span>`}</p>
     ${saved ? `<button class="btn" id="shareTurn">Nudge the next player</button>` : ''}
     ${n>=2 && saved ? `<button class="btn gold" id="shareReveal">We’re done, tell everyone to unfold it</button>` : ''}
     ${n>=2 ? `<button class="btn alt" id="revealNow">Unfold it right here</button>` : ''}
