@@ -3,128 +3,256 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>The Sentence Picture Game — Pass-It-On Edition</title>
+<title>Sentence Picture: Raccoon Regatta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --table:#2F4A3E; --paper:#FDFBF2; --paper-shade:#F1ECDC;
-  --ink:#26324B; --ink-soft:#5A6480;
-  --marker:#6C4AB0; --marker-deep:#57399A;
-  --hi:#FFD64D; --redpen:#DE5B6D; --line:#D8D2BE; --radius:14px;
+  --lake:#0F4C5C; --lake-deep:#0B3A47; --lake-light:#1E7F91; --foam:#CFEDF2;
+  --paper:#FFF8E7; --paper-shade:#F3E9D2; --line:#DCCFB3;
+  --ink:#2B2A33; --ink-soft:#5F5B6B;
+  --mahogany:#8B3A1E; --mahogany-deep:#5E2512;
+  --varnish:#E0943E; --varnish-deep:#B86F22;
+  --coon:#7F8891; --coon-dark:#3A3842;
+  --jelly:#F08BB1; --redpen:#D9534F;
+  --radius:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
+html{background:#0B3A47}
+html,body{min-height:100%}
 body{
   font-family:'Nunito',system-ui,sans-serif;color:var(--ink);
-  background:radial-gradient(1200px 700px at 50% -10%, rgba(255,255,255,.07), transparent 60%),var(--table);
-  min-height:100%;display:flex;flex-direction:column;align-items:center;padding:22px 14px 60px;
+  background:linear-gradient(180deg,#F7D9A8 0,#E9A46B 90px,#2A8EA0 230px,#0F4C5C 460px,#0B3A47 700px) no-repeat #0B3A47;
+  min-height:100%;display:flex;flex-direction:column;align-items:center;padding:18px 14px 60px;
 }
 h1,h2,h3{font-family:'Shantell Sans','Comic Sans MS',cursive}
 button{font-family:inherit;cursor:pointer;border:none}
 input,textarea{font-family:inherit}
+a{color:var(--foam)}
 .wrap{width:100%;max-width:560px}
 .wrap.wide{max-width:760px}
-.brand{text-align:center;color:var(--paper);margin-bottom:18px;user-select:none}
-.brand h1{font-size:clamp(26px,6vw,38px);font-weight:800;line-height:1.1}
-.brand h1 .w1{color:var(--hi)}
-.brand .sub{font-size:14px;opacity:.75;margin-top:4px;font-weight:600}
+.brand{text-align:center;color:#3B2A1C;margin-bottom:8px;user-select:none;width:100%;max-width:600px}
+.brand h1{font-size:clamp(28px,6.5vw,40px);font-weight:800;line-height:1.1;text-shadow:0 1px 0 rgba(255,255,255,.45)}
+.brand h1 .w1{color:var(--mahogany)}
+.brand h1 .w2{color:#1F5F6E}
+.brand .sub{font-size:14px;font-weight:700;margin-top:2px;color:#5A3E2A}
+.scene{width:100%;height:auto;display:block;margin-top:4px}
 .card{
   background:var(--paper);border-radius:var(--radius);
   box-shadow:0 14px 34px rgba(0,0,0,.34), 0 2px 0 rgba(255,255,255,.35) inset;
-  padding:24px 22px 26px;position:relative;
+  padding:22px 20px 24px;position:relative;
 }
 .card + .card{margin-top:16px}
-.card::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;background:var(--redpen);opacity:.28;border-radius:2px}
+.card::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;background:var(--varnish);opacity:.7;border-radius:2px}
 .card h2{font-size:22px;font-weight:800;margin-bottom:6px}
 .card .hint{color:var(--ink-soft);font-size:14px;line-height:1.5;margin-bottom:14px}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
 .field input{width:100%;padding:12px 14px;font-size:17px;font-weight:700;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:10px;outline:none}
-.field input:focus{border-color:var(--marker)}
-.btn{display:block;width:100%;padding:14px;border-radius:12px;font-size:17px;font-weight:800;background:var(--marker);color:#fff;box-shadow:0 4px 0 var(--marker-deep);transition:transform .06s,box-shadow .06s}
-.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--marker-deep)}
-.btn.alt{background:var(--paper-shade);color:var(--ink);box-shadow:0 4px 0 #d9d2ba}
-.btn.gold{background:var(--hi);color:var(--ink);box-shadow:0 4px 0 #d9b32e}
+.field input:focus{border-color:var(--lake-light)}
+.btn{display:block;width:100%;padding:14px;border-radius:12px;font-size:17px;font-weight:800;background:var(--mahogany);color:#fff;box-shadow:0 4px 0 var(--mahogany-deep);transition:transform .06s,box-shadow .06s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--mahogany-deep)}
+.btn.alt{background:var(--paper-shade);color:var(--ink);box-shadow:0 4px 0 #d9ccaf}
+.btn.gold{background:var(--varnish);color:#2B1A0E;box-shadow:0 4px 0 var(--varnish-deep)}
+.btn.lake{background:var(--lake-light);color:#fff;box-shadow:0 4px 0 var(--lake)}
 .btn.small{width:auto;padding:9px 16px;font-size:14px;display:inline-block}
 .btn:disabled{opacity:.45;cursor:default;transform:none}
 .btn + .btn{margin-top:10px}
 .divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--ink-soft);font-weight:800;font-size:12px;letter-spacing:2px}
 .divider::before,.divider::after{content:"";flex:1;height:2px;background:var(--line);border-radius:2px}
 .errmsg{color:var(--redpen);font-weight:700;font-size:14px;margin-top:10px;min-height:18px}
-.prompt-label{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--marker);margin-bottom:8px}
-.round-pill{float:right;background:var(--ink);color:var(--paper);border-radius:999px;padding:3px 12px;font-size:12px;font-weight:800}
+.okmsg{color:#2E7D4F;font-weight:700;font-size:14px;margin-top:10px}
+.prompt-label{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--lake-light);margin-bottom:8px}
+.round-pill{float:right;background:var(--lake);color:var(--paper);border-radius:999px;padding:3px 12px;font-size:12px;font-weight:800}
 .prev-entry{background:#fff;border:2px dashed var(--line);border-radius:12px;padding:14px;margin-bottom:16px}
-.prev-entry .who{font-size:12px;font-weight:800;color:var(--ink-soft);margin-bottom:6px}
-.prev-entry .sentence{font-family:'Shantell Sans',cursive;font-size:20px;font-weight:700;line-height:1.35}
-.prev-entry canvas{width:100%;border-radius:8px;display:block;background:#fff}
+.prev-entry .who{font-size:12px;font-weight:800;color:var(--ink-soft);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.prev-entry .sentence{font-family:'Shantell Sans',cursive;font-size:20px;font-weight:700;line-height:1.35;white-space:pre-wrap}
+.drawing{width:100%;border-radius:8px;display:block;background:#fff}
+.comic{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--ink);padding:6px;border-radius:10px}
+.comic.n1{grid-template-columns:1fr}
+.comic-pane{background:#fff;border-radius:6px;overflow:hidden}
+.comic-pane .drawing{border-radius:0}
+@media (max-width:480px){.comic{grid-template-columns:1fr}}
 textarea.write{
-  width:100%;min-height:96px;resize:vertical;
-  background:repeating-linear-gradient(transparent,transparent 31px,rgba(38,50,75,.14) 31px,rgba(38,50,75,.14) 32px);
+  width:100%;min-height:96px;resize:none;overflow:hidden;
+  background:repeating-linear-gradient(transparent,transparent 31px,rgba(43,42,51,.14) 31px,rgba(43,42,51,.14) 32px);
   border:2px solid var(--line);border-radius:10px;padding:8px 14px;
   font-family:'Shantell Sans',cursive;font-size:19px;font-weight:600;line-height:32px;color:var(--ink);outline:none;
 }
-textarea.write:focus{border-color:var(--marker)}
-textarea.paste{
-  width:100%;min-height:110px;resize:vertical;border:2px solid var(--line);border-radius:10px;
-  padding:10px 12px;font-size:13px;font-weight:600;color:var(--ink);outline:none;word-break:break-all;
-}
-textarea.paste:focus{border-color:var(--marker)}
-.charcount{text-align:right;font-size:12px;color:var(--ink-soft);font-weight:700;margin:4px 2px 12px}
+textarea.write:focus{border-color:var(--lake-light)}
+textarea.paste{width:100%;min-height:90px;resize:vertical;border:2px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;color:var(--ink);outline:none;word-break:break-all}
+textarea.paste:focus{border-color:var(--lake-light)}
+.pane-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.tab{padding:7px 12px;border-radius:999px;background:#fff;border:2px solid var(--line);font-weight:800;font-size:13px;color:var(--ink)}
+.tab.sel{border-color:var(--lake-light);background:#E3F3F6}
+.tab.add{border-style:dashed;color:var(--lake-light)}
+.tab.del{color:var(--redpen)}
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}
 .swatch{width:32px;height:32px;border-radius:50%;border:3px solid transparent;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .swatch.sel{border-color:var(--ink);transform:scale(1.12)}
 .sizebtn{width:36px;height:32px;border-radius:8px;background:#fff;border:2px solid var(--line);display:flex;align-items:center;justify-content:center}
-.sizebtn.sel{border-color:var(--marker);background:#F2ECFC}
+.sizebtn.sel{border-color:var(--lake-light);background:#E3F3F6}
 .sizebtn span{border-radius:50%;background:var(--ink);display:block}
 .tool{height:32px;padding:0 12px;border-radius:8px;background:#fff;border:2px solid var(--line);font-weight:800;font-size:13px;color:var(--ink)}
-.tool.sel{border-color:var(--marker);background:#F2ECFC}
+.tool.sel{border-color:var(--lake-light);background:#E3F3F6}
 .canvas-holder{border:2px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;touch-action:none;overscroll-behavior:contain}
-canvas#pad{display:block;width:100%;height:auto;touch-action:none;-webkit-user-select:none;user-select:none}
-.passbox{background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px;margin-bottom:14px;max-height:150px;overflow:auto;font-size:12px;font-weight:600;word-break:break-all;color:var(--ink-soft)}
-.bigcheck{text-align:center;font-size:52px;margin:4px 0 10px}
-.tabsrow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+canvas.pad{display:block;width:100%;height:auto;touch-action:none;-webkit-user-select:none;user-select:none}
+.passbox{background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px;margin-bottom:14px;max-height:150px;overflow:auto;font-size:12px;font-weight:600;word-break:break-all;color:var(--ink-soft);white-space:pre-wrap}
+.bigmark{text-align:center;margin:4px 0 10px}
+.bigmark svg{width:72px;height:72px}
 .strip{perspective:1200px}
-.panel{background:var(--paper);padding:16px 18px;border-bottom:2px dashed rgba(38,50,75,.22);transform-origin:top center;animation:unfold .55s cubic-bezier(.34,1.3,.5,1) both}
+.panel{background:var(--paper);padding:16px 18px;border-bottom:2px dashed rgba(43,42,51,.22);transform-origin:top center;animation:unfold .55s cubic-bezier(.34,1.3,.5,1) both}
 .panel:first-child{border-radius:var(--radius) var(--radius) 0 0}
-.panel .who{font-size:12px;font-weight:800;letter-spacing:1px;color:var(--marker);text-transform:uppercase;margin-bottom:6px}
-.panel .sentence{font-family:'Shantell Sans',cursive;font-size:20px;font-weight:700;line-height:1.35}
-.panel canvas{width:100%;border-radius:8px;display:block;background:#fff}
+.panel .who{font-size:12px;font-weight:800;letter-spacing:1px;color:var(--lake-light);text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.panel .sentence{font-family:'Shantell Sans',cursive;font-size:20px;font-weight:700;line-height:1.35;white-space:pre-wrap}
 @keyframes unfold{from{transform:rotateX(-88deg);opacity:0;box-shadow:0 30px 40px rgba(0,0,0,.4)}to{transform:rotateX(0);opacity:1;box-shadow:none}}
 @media (prefers-reduced-motion: reduce){.panel{animation:none}}
-.foldbtn{width:100%;padding:15px;border-radius:0 0 var(--radius) var(--radius);background:var(--hi);color:var(--ink);font-family:'Shantell Sans',cursive;font-size:17px;font-weight:800;box-shadow:0 10px 24px rgba(0,0,0,.3)}
+.foldbtn{width:100%;padding:15px;border-radius:0 0 var(--radius) var(--radius);background:var(--varnish);color:#2B1A0E;font-family:'Shantell Sans',cursive;font-size:17px;font-weight:800;box-shadow:0 10px 24px rgba(0,0,0,.3)}
 .strip-shadowbox{border-radius:var(--radius);box-shadow:0 14px 34px rgba(0,0,0,.34);overflow:hidden}
 .reveal-actions{margin-top:18px}
-footer{margin-top:26px;color:rgba(255,255,255,.45);font-size:12px;font-weight:700;text-align:center;max-width:560px}
+.gamelist{display:flex;flex-direction:column;gap:8px}
+.gamerow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--ink)}
+.gamerow:active{background:var(--paper-shade)}
+.gamerow .gdate{font-size:12px;font-weight:800;color:var(--ink-soft);min-width:58px}
+.gamerow .gmain{flex:1;min-width:0}
+.gamerow .gtitle{font-family:'Shantell Sans',cursive;font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gamerow .gmeta{font-size:12px;color:var(--ink-soft);font-weight:700}
+.gamerow .gstatus{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--paper-shade);color:var(--ink-soft)}
+.gamerow .gstatus.live{background:#DDF3E4;color:#2E7D4F}
+.tiny{color:rgba(255,255,255,.7);font-size:12px;font-weight:700;text-align:center;margin-top:16px}
+.tiny a{color:var(--foam);text-decoration:underline;cursor:pointer}
+.pwrow{display:flex;gap:8px}
+.pwrow input{flex:1}
+.pwrow button{width:auto;padding:0 14px;border-radius:10px;background:var(--paper-shade);font-weight:800;font-size:13px}
+.ico{width:16px;height:16px;flex:none}
+footer{margin-top:26px;color:rgba(255,255,255,.55);font-size:12px;font-weight:700;text-align:center;max-width:560px;line-height:1.5}
 .hidden{display:none !important}
 </style>
 </head>
 <body>
 
 <div class="brand">
-  <h1><span class="w1">Sentence</span> ✦ Picture</h1>
-  <div class="sub">write it · draw it · pass it · giggle</div>
+  <h1><span class="w1">Sentence</span> ✦ <span class="w2">Picture</span></h1>
+  <div class="sub">write it · draw it · pass it down the dock</div>
+  <svg class="scene" viewBox="0 0 600 210" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2A8EA0"/><stop offset="1" stop-color="#0F4C5C"/>
+      </linearGradient>
+      <linearGradient id="hull" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#A8482A"/><stop offset="1" stop-color="#6B2A14"/>
+      </linearGradient>
+    </defs>
+    <!-- seagulls -->
+    <g fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity=".95">
+      <path d="M110 44 q7 -8 14 0 q7 -8 14 0"/>
+      <path d="M152 28 q6 -7 12 0 q6 -7 12 0"/>
+      <path d="M470 52 q7 -8 14 0 q7 -8 14 0"/>
+      <path d="M505 36 q5 -6 10 0 q5 -6 10 0"/>
+    </g>
+    <!-- water -->
+    <rect x="0" y="120" width="600" height="90" rx="12" fill="url(#water)"/>
+    <!-- jellyfish (under water) -->
+    <g opacity=".9">
+      <g transform="translate(80 160)">
+        <path d="M-16 0 A16 16 0 0 1 16 0 L13 4 L9 1 L5 5 L1 1 L-3 5 L-7 1 L-11 5 L-14 1 Z" fill="#F08BB1" opacity=".9"/>
+        <path d="M-9 4 q-4 10 0 19 q3 8 -1 16 M0 5 q3 10 -1 19 q-2 8 2 16 M9 4 q4 10 0 19 q-3 8 1 16" fill="none" stroke="#F6B3CC" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+        <circle cx="-6" cy="-6" r="2" fill="#fff" opacity=".6"/>
+      </g>
+      <g transform="translate(525 168) scale(.8)">
+        <path d="M-16 0 A16 16 0 0 1 16 0 L13 4 L9 1 L5 5 L1 1 L-3 5 L-7 1 L-11 5 L-14 1 Z" fill="#C98BE8" opacity=".9"/>
+        <path d="M-9 4 q-4 10 0 19 q3 8 -1 16 M0 5 q3 10 -1 19 q-2 8 2 16 M9 4 q4 10 0 19 q-3 8 1 16" fill="none" stroke="#DFB6F2" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+      </g>
+      <g transform="translate(566 150) scale(.6)">
+        <path d="M-16 0 A16 16 0 0 1 16 0 L13 4 L9 1 L5 5 L1 1 L-3 5 L-7 1 L-11 5 L-14 1 Z" fill="#F08BB1" opacity=".9"/>
+        <path d="M-9 4 q-4 10 0 19 M0 5 q3 10 -1 19 M9 4 q4 10 0 19" fill="none" stroke="#F6B3CC" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>
+      </g>
+    </g>
+    <!-- wake -->
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity=".55">
+      <path d="M120 126 q25 -7 50 0 q25 7 50 0"/>
+      <path d="M135 134 q20 -6 40 0 q20 6 40 0"/>
+      <path d="M445 128 q18 -6 36 0 q18 6 36 0"/>
+    </g>
+    <!-- raccoon (behind hull) -->
+    <g>
+      <path d="M282 104 q-18 -4 -34 -24 q-6 -8 -2 -16" fill="none" stroke="#7F8891" stroke-width="11" stroke-linecap="round"/>
+      <path d="M282 104 q-18 -4 -34 -24 q-6 -8 -2 -16" fill="none" stroke="#3A3842" stroke-width="11" stroke-linecap="round" stroke-dasharray="8 9"/>
+      <ellipse cx="325" cy="112" rx="21" ry="17" fill="#7F8891"/>
+      <ellipse cx="325" cy="116" rx="12" ry="10" fill="#D9DDE0"/>
+      <path d="M311 72 l-8 -14 l14 6 z M339 72 l8 -14 l-14 6 z" fill="#7F8891"/>
+      <path d="M311 72 l-5 -9 l9 4 z M339 72 l5 -9 l-9 4 z" fill="#D9DDE0"/>
+      <circle cx="325" cy="82" r="18" fill="#7F8891"/>
+      <ellipse cx="325" cy="92" rx="10" ry="7" fill="#D9DDE0"/>
+      <path d="M307 80 q8 -7 18 -4 q10 -3 18 4 q-2 9 -18 9 q-16 0 -18 -9 z" fill="#3A3842"/>
+      <circle cx="318" cy="81" r="3.2" fill="#fff"/><circle cx="332" cy="81" r="3.2" fill="#fff"/>
+      <circle cx="318.8" cy="81.5" r="1.6" fill="#1B1A22"/><circle cx="332.8" cy="81.5" r="1.6" fill="#1B1A22"/>
+      <ellipse cx="325" cy="90" rx="2.6" ry="2" fill="#1B1A22"/>
+      <circle cx="356" cy="103" r="4" fill="#7F8891"/>
+    </g>
+    <!-- boat -->
+    <path d="M188 112 L204 140 L404 140 L442 110 L434 101 L412 104 L188 105 Z" fill="url(#hull)"/>
+    <path d="M190 105 L412 104 L434 101" fill="none" stroke="#F3E2C4" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M196 118 L410 118" fill="none" stroke="#F3E2C4" stroke-width="1.5" opacity=".6"/>
+    <path d="M344 104 L351 89 L373 89 L369 104 Z" fill="#CFEDF2" opacity=".75" stroke="#F3E2C4" stroke-width="1.5"/>
+    <circle cx="358" cy="101" r="7" fill="none" stroke="#2B1A0E" stroke-width="2.2"/>
+    <path d="M358 94 v14 M351 101 h14" stroke="#2B1A0E" stroke-width="1.6"/>
+    <path d="M198 104 v-20 l14 5 l-14 5" fill="#E0943E" stroke="#B86F22" stroke-width="1"/>
+    <!-- water overlay so hull sits in the lake -->
+    <rect x="0" y="120" width="600" height="90" rx="12" fill="url(#water)" opacity=".35"/>
+    <g fill="none" stroke="#CFEDF2" stroke-width="1.5" opacity=".35">
+      <path d="M20 160 q15 -5 30 0 q15 5 30 0"/>
+      <path d="M200 182 q15 -5 30 0 q15 5 30 0"/>
+      <path d="M380 170 q15 -5 30 0 q15 5 30 0"/>
+      <path d="M470 196 q15 -5 30 0 q15 5 30 0"/>
+    </g>
+  </svg>
 </div>
 
 <div class="wrap" id="app"></div>
 
-<footer>Pass-It-On Edition — no accounts, no sign-ups. The whole game travels inside the message you pass along, just like the folded paper.</footer>
+<footer>One shared paper floating in the lake. Everyone opens the game, checks the paper, and takes their fold. Everything is scrambled with the family password before it leaves your phone.</footer>
 
 <script>
 /* =====================================================
-   Sentence Picture Game — RELAY EDITION
-   No storage, no server. Game state is compressed into
-   a code that players pass along via text message.
+   Sentence Picture: Raccoon Regatta
+   - one shared paper per game, stored encrypted in Pantry
+   - "Check the paper" finds the active game, no links/pasting
+   - past games archive
+   - multi-panel comic drawings + photo upload
 ===================================================== */
 const $ = s => document.querySelector(s);
 const app = $('#app');
-const W = 1000, H = 750;              // drawing coordinate space
-const COLORS = ['#26324B','#6C4AB0','#DE5B6D','#2E8B57','#E8862E','#2B7BC4','#C9A227','#8B5A3C','#EC7FB4','#2AA9A0'];
+const W = 1000, H = 750;
+const COLORS = ['#2B2A33','#8B3A1E','#D9534F','#2E8B57','#E0943E','#1E7F91','#C9A227','#7F8891','#F08BB1','#6C4AB0'];
 const SIZES = [2,5,10,20];
+const MAX_PANES = 6;
 
-const S = { screen:'home', state:null, myName:'', err:'', revealShown:1 };
+/* >>> your Pantry (getpantry.cloud) <<< */
+const PANTRY_ID = 'a64ed0ed-aef9-4cdb-a718-8380fc5b7f8b';
+const usePantry = /^[A-Za-z0-9\-]{20,}$/.test(PANTRY_ID);
+const INDEX_BASKET = 'spgindex';
+const PANTRY_BASE = 'https://getpantry.cloud/apiv1/pantry/';
 
-/* ---------- pack / unpack ---------- */
+const ICON_WROTE = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 14 q5 -6 10 0 q5 -6 10 0"/></svg>';
+const ICON_DREW = '<svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M4 11 A8 8 0 0 1 20 11 L18 13 L16 11 L14 13 L12 11 L10 13 L8 11 L6 13 Z"/><path d="M8 14 q-2 4 0 8 M12 14 q2 4 0 8 M16 14 q-2 4 0 8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+
+const S = {
+  screen:'home', state:null, myName:'', err:'', ok:'',
+  revealShown:1, passReady:false,
+  key:null, pendingHash:null, pwWrong:false,
+  index:null, activeGame:null, loadingHome:false,
+};
+
+/* ---------- local storage ---------- */
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
+function saveLocalRoom(){ if(S.state && S.state.room) lsSet('spgRoom', S.state.room); }
+function localRoom(){ return lsGet('spgRoom'); }
+
+/* ---------- bytes / base64 / compression ---------- */
+const te = new TextEncoder(), td = new TextDecoder();
 function b64url(bytes){
   let bin=''; for(let i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]);
   return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
@@ -137,155 +265,158 @@ function unb64url(str){
   for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
   return bytes;
 }
-async function packState(state){
-  const bytes = new TextEncoder().encode(JSON.stringify(state));
-  if(typeof CompressionStream !== 'undefined'){
-    try{
-      const buf = await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer();
-      return 'SPG1.' + b64url(new Uint8Array(buf));
-    }catch(e){}
+const canCompress = typeof CompressionStream !== 'undefined';
+async function deflate(bytes){
+  if(!canCompress) return bytes;
+  const buf = await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer();
+  return new Uint8Array(buf);
+}
+async function inflate(bytes){
+  const buf = await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();
+  return new Uint8Array(buf);
+}
+
+/* ---------- encryption (family password) ---------- */
+async function deriveKey(pw){
+  const km = await crypto.subtle.importKey('raw', te.encode(pw.normalize('NFKC')), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    {name:'PBKDF2', salt: te.encode('sentence-picture-family-v1'), iterations:120000, hash:'SHA-256'},
+    km, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
+}
+async function setPassword(pw){ S.key = await deriveKey(pw); lsSet('spgPw', pw); S.pwWrong=false; }
+async function loadPassword(){ const pw = lsGet('spgPw'); if(pw){ try{ S.key = await deriveKey(pw); }catch(e){} } }
+function forgetPassword(){ S.key=null; lsDel('spgPw'); }
+async function encryptBytes(bytes){
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, S.key, bytes));
+  const out = new Uint8Array(12 + ct.length); out.set(iv); out.set(ct, 12); return out;
+}
+async function decryptBytes(bytes){
+  return new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv: bytes.slice(0,12)}, S.key, bytes.slice(12)));
+}
+/* wrapped record: {v:2, c:1|0, enc:b64} */
+async function sealJson(obj){
+  const raw = te.encode(JSON.stringify(obj));
+  const body = await deflate(raw);
+  return {v:2, c: canCompress?1:0, enc: b64url(await encryptBytes(body))};
+}
+async function openJson(wrapped){
+  if(!wrapped) return null;
+  if(wrapped.enc){
+    if(!S.key) throw new Error('nokey');
+    let bytes = await decryptBytes(unb64url(wrapped.enc));
+    if(wrapped.c) bytes = await inflate(bytes);
+    return JSON.parse(td.decode(bytes));
   }
-  return 'SPG0.' + b64url(bytes);
+  return wrapped; // legacy unencrypted
+}
+
+/* ---------- pass-along codes (backup path) ---------- */
+async function packState(state){
+  const raw = te.encode(JSON.stringify(state));
+  if(S.key){
+    const body = await deflate(raw);
+    return (canCompress?'SPG2.':'SPG3.') + b64url(await encryptBytes(body));
+  }
+  if(canCompress) return 'SPG1.' + b64url(await deflate(raw));
+  return 'SPG0.' + b64url(raw);
 }
 async function unpackState(text){
   text = text || '';
-  const candidates = [];
-  const strict = text.match(/SPG([01])\.([A-Za-z0-9_\-]+)/);
-  if(strict) candidates.push([strict[1], strict[2]]);
-  // fallback: some apps wrap long messages with line breaks mid-code —
-  // take everything after the marker and strip whitespace
-  const loose = text.match(/SPG([01])\.([\s\S]+)$/);
-  if(loose) candidates.push([loose[1], loose[2].replace(/[^A-Za-z0-9_\-]/g,'')]);
-  for(const [ver, body] of candidates){
+  const cands = [];
+  const strict = text.match(/SPG([0-3])\.([A-Za-z0-9_\-]+)/);
+  if(strict) cands.push([strict[1], strict[2]]);
+  const loose = text.match(/SPG([0-3])\.([\s\S]+)$/);
+  if(loose) cands.push([loose[1], loose[2].replace(/[^A-Za-z0-9_\-]/g,'')]);
+  let sawEncrypted = false;
+  for(const [ver, body] of cands){
     try{
-      const bytes = unb64url(body);
-      let json;
-      if(ver==='1'){
-        const buf = await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();
-        json = new TextDecoder().decode(buf);
-      } else {
-        json = new TextDecoder().decode(bytes);
+      let bytes = unb64url(body);
+      if(ver==='2' || ver==='3'){
+        sawEncrypted = true;
+        if(!S.key) throw new Error('nokey');
+        bytes = await decryptBytes(bytes);
+        if(ver==='2') bytes = await inflate(bytes);
+      } else if(ver==='1'){
+        bytes = await inflate(bytes);
       }
-      const st = JSON.parse(json);
+      const st = JSON.parse(td.decode(bytes));
       if(st && Array.isArray(st.entries)) return st;
     }catch(e){}
   }
-  return null;
+  return sawEncrypted ? 'badkey' : null;
 }
 
-/* ---------- helpers ---------- */
-function esc(str){ const d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
-function safeImg(src){ return (typeof src==='string' && src.startsWith('data:image/')) ? src : ''; }
-
-/* ---------- cloud pass storage ----------
-   PRIMARY: Pantry (getpantry.cloud) — YOUR private JSON storage.
-   >>> ONE-TIME SETUP: visit https://getpantry.cloud , tap "Create a Pantry",
-   >>> copy your Pantry ID, and paste it between the quotes below. <<<
-   FALLBACK: JSONBlob (public service) if no Pantry ID is set. */
-const PANTRY_ID = 'a64ed0ed-aef9-4cdb-a718-8380fc5b7f8b';
-const usePantry = /^[A-Za-z0-9\-]{20,}$/.test(PANTRY_ID);
-const BLOB_API = 'https://jsonblob.com/api/jsonBlob';
-function pantryUrl(id){ return 'https://getpantry.cloud/apiv1/pantry/' + PANTRY_ID + '/basket/spg' + id; }
+/* ---------- Pantry storage ---------- */
+function pantryUrl(basket){ return PANTRY_BASE + PANTRY_ID + '/basket/' + basket; }
 function randId(){ let s=''; const A='abcdefghjkmnpqrstuvwxyz23456789'; for(let i=0;i<12;i++) s+=A[Math.floor(Math.random()*A.length)]; return s; }
-
-async function storeState(state){
-  if(usePantry){
-    const id = randId();
-    try{
-      const resp = await fetch(pantryUrl(id), {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(state)
-      });
-      if(resp.ok) return id;
-    }catch(e){}
-    return null;
-  }
-  try{
-    const resp = await fetch(BLOB_API, {
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body: JSON.stringify(state)
-    });
-    if(!resp.ok) return null;
-    const loc = resp.headers.get('Location') || resp.headers.get('X-jsonblob-id') || resp.headers.get('X-Jsonblob');
-    if(!loc) return null;
-    const id = loc.split('/').pop();
-    return id && id.length > 5 ? id : null;
-  }catch(e){ return null; }
+async function basketGet(b){
+  if(!usePantry) return null;
+  try{ const r = await fetch(pantryUrl(b), {cache:'no-store'}); if(!r.ok) return null; return await r.json(); }catch(e){ return null; }
 }
-async function fetchState(id){
-  if(usePantry){
-    try{
-      const resp = await fetch(pantryUrl(id));
-      if(resp.ok){
-        const st = await resp.json();
-        if(st && Array.isArray(st.entries)) return st;
-      }
-    }catch(e){}
-    // fall through to JSONBlob in case this id predates the Pantry switch
-  }
+async function basketPost(b, obj){
+  if(!usePantry) return false;
   try{
-    const resp = await fetch(BLOB_API + '/' + encodeURIComponent(id), {headers:{'Accept':'application/json'}});
-    if(!resp.ok) return null;
-    const st = await resp.json();
-    return (st && Array.isArray(st.entries)) ? st : null;
-  }catch(e){ return null; }
-}
-async function putState(id, state){
-  if(usePantry){
-    try{
-      // POST replaces the whole basket (PUT would merge, which corrupts the entries list)
-      const resp = await fetch(pantryUrl(id), {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(state)
-      });
-      if(resp.ok) return true;
-    }catch(e){}
-  }
-  try{
-    const resp = await fetch(BLOB_API + '/' + encodeURIComponent(id), {
-      method:'PUT',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body: JSON.stringify(state)
-    });
-    return resp.ok;
+    const r = await fetch(pantryUrl(b), {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(obj)});
+    return r.ok;
   }catch(e){ return false; }
 }
-/* this device remembers the family's game so no links or pasting are needed */
-function saveLocalRoom(){
-  if(!S.state || !S.state.room) return;
-  try{ localStorage.setItem('spgRoom', JSON.stringify({id:S.state.room, name:S.myName||''})); }catch(e){}
+async function storeState(state){
+  const id = randId();
+  const ok = await basketPost('spg'+id, await sealJson(state));
+  return ok ? id : null;
 }
-function localRoom(){
-  try{ return JSON.parse(localStorage.getItem('spgRoom')||'null'); }catch(e){ return null; }
+async function putState(id, state){ return basketPost('spg'+id, await sealJson(state)); }
+/* returns state | null (missing/offline) | 'badkey' (wrong password) */
+async function fetchState(id){
+  const w = await basketGet('spg'+id);
+  if(!w) return null;
+  try{ const st = await openJson(w); return (st && Array.isArray(st.entries)) ? st : null; }
+  catch(e){ return 'badkey'; }
 }
-function clearLocalRoom(){ try{ localStorage.removeItem('spgRoom'); }catch(e){} }
-/* Accepts: full pass message, SPG code, short link with #g=ID, link-free SPGB code, or bare blob id */
+/* games index: [{id,t,by,first,n,last,done}] */
+async function getIndex(){
+  const w = await basketGet(INDEX_BASKET);
+  if(!w) return [];
+  try{ const ix = await openJson(w); return (ix && Array.isArray(ix.games)) ? ix.games : []; }
+  catch(e){ return 'badkey'; }
+}
+async function updateIndex(state){
+  if(!state.room) return;
+  let games = await getIndex();
+  if(games==='badkey') return;
+  const first = state.entries[0], last = state.entries[state.entries.length-1];
+  const e = { id:state.room, t:state.t||Date.now(), by:first?first.a:'', first:(first&&first.t==='s')?String(first.c).slice(0,80):'',
+              n:state.entries.length, last:last?last.a:'', done:!!state.done, u:state.u||'' };
+  games = games.filter(g=>g.id!==state.room);
+  games.unshift(e);
+  await basketPost(INDEX_BASKET, await sealJson({games: games.slice(0,300)}));
+}
+/* Accepts: pass message / SPG code / link with #g=ID / bare id */
 async function resolveInput(text){
   text = (text||'').trim();
   const inline = await unpackState(text);
   if(inline) return inline;
   const b = text.match(/SPGB\.([A-Za-z0-9\-]+?)(\.R)?(?![A-Za-z0-9\-])/);
-  if(b){
-    const st = await fetchState(b[1]);
-    if(st){ if(b[2]) st.done = true; return st; }
-    return 'fetchfail';
-  }
   const g = text.match(/[#&?]g=([A-Za-z0-9\-]+)(?:&(r)=1)?/);
-  if(g){
-    const st = await fetchState(g[1]);
-    if(st){ if(g[2]) st.done = true; return st; }
+  const m = b || g;
+  if(m){
+    const st = await fetchState(m[1]);
+    if(st==='badkey') return 'badkey';
+    if(st){ if(m[2]) st.done = true; return st; }
     return 'fetchfail';
   }
   return null;
 }
+
+/* ---------- helpers ---------- */
+function esc(str){ const d=document.createElement('div'); d.textContent=str==null?'':String(str); return d.innerHTML; }
+function safeImg(src){ return (typeof src==='string' && src.startsWith('data:image/')) ? src : ''; }
 function lastEntry(){ return S.state.entries[S.state.entries.length-1]; }
 function nextIsDrawing(){ return lastEntry().t === 's'; }
 function foldNum(){ return S.state.entries.length + 1; }
+function fmtDate(t){ try{ return new Date(t).toLocaleDateString(undefined,{month:'short',day:'numeric'}); }catch(e){ return ''; } }
 
-/* Render stored strokes onto a canvas element */
 function paintStrokes(canvas, strokes){
   canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext('2d');
@@ -297,29 +428,35 @@ function paintStrokes(canvas, strokes){
     const base = SIZES[s.w]||5;
     ctx.lineWidth = s.e ? base*3 : (s.h ? base*2.5 : base);
     ctx.beginPath();
-    const p = s.p;
-    for(let i=0;i<p.length;i+=2){
-      if(i===0) ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[i],p[i+1]);
-    }
+    const p = s.p||[];
+    for(let i=0;i<p.length;i+=2){ if(i===0) ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[i],p[i+1]); }
     if(p.length===2) ctx.lineTo(p[0]+.1,p[1]+.1);
     ctx.stroke();
   }
   ctx.globalAlpha = 1;
 }
+function paneHtml(c){
+  if(c && c.img) return `<img src="${safeImg(c.img)}" class="drawing" alt="drawing">`;
+  return `<canvas class="drawing"></canvas>`;
+}
 function drawingHtml(entry){
-  if(entry.c && entry.c.img) return `<img src="${safeImg(entry.c.img)}" alt="drawing" style="width:100%;border-radius:8px;display:block;background:#fff">`;
-  return `<canvas></canvas>`;
+  const c = entry.c || {};
+  if(Array.isArray(c.p)) return `<div class="comic n${c.p.length}">` + c.p.map(x=>`<div class="comic-pane">${paneHtml(x)}</div>`).join('') + `</div>`;
+  return paneHtml(c);
 }
 function hydrateDrawing(container, entry){
-  const cv = container.querySelector('canvas');
-  if(cv) paintStrokes(cv, (entry.c && entry.c.s) || []);
+  const c = entry.c || {};
+  const list = Array.isArray(c.p) ? c.p : [c];
+  const cvs = container.querySelectorAll('canvas.drawing');
+  let k = 0;
+  list.forEach(x=>{ if(x && x.img) return; const cv = cvs[k++]; if(cv) paintStrokes(cv, (x && x.s) || []); });
 }
 function renderPrevEntry(container){
   const prev = lastEntry();
   if(prev.t==='s'){
-    container.innerHTML = `<div class="who">${esc(prev.a)} wrote:</div><div class="sentence">“${esc(prev.c)}”</div>`;
+    container.innerHTML = `<div class="who">${ICON_WROTE}${esc(prev.a)} wrote:</div><div class="sentence">${esc(prev.c)}</div>`;
   } else {
-    container.innerHTML = `<div class="who">${esc(prev.a)} drew:</div>` + drawingHtml(prev);
+    container.innerHTML = `<div class="who">${ICON_DREW}${esc(prev.a)} drew:</div>` + drawingHtml(prev);
     hydrateDrawing(container, prev);
   }
 }
@@ -330,85 +467,155 @@ function renderPrevEntry(container){
 let lastScreen = null;
 function render(){
   app.classList.toggle('wide', S.screen==='draw' || S.screen==='reveal');
-  ({home:renderHome, write:renderWrite, draw:renderDraw, pass:renderPass, reveal:renderReveal})[S.screen]();
+  ({home:renderHome, password:renderPassword, write:renderWrite, draw:renderDraw, pass:renderPass, reveal:renderReveal})[S.screen]();
   if(S.screen !== lastScreen) window.scrollTo({top:0});
   lastScreen = S.screen;
+}
+function enterState(st){
+  S.state = st; saveLocalRoom();
+  S.screen = st.done ? 'reveal' : (nextIsDrawing() ? 'draw' : 'write');
+  S.revealShown = 1; S.err=''; render();
+}
+
+/* ---------- PASSWORD ---------- */
+function renderPassword(){
+  app.innerHTML = `
+  <div class="card">
+    <h2>Family password</h2>
+    <p class="hint">Everything this game saves is scrambled with this password before it leaves your phone, so only the family can read the paper. Everyone uses the same password. If you were invited, ask whoever sent the link.</p>
+    <div class="field">
+      <label for="pwIn">Password</label>
+      <div class="pwrow"><input id="pwIn" type="password" autocomplete="off" placeholder="the family password"><button id="pwShow" type="button">show</button></div>
+    </div>
+    <button class="btn" id="pwBtn">Unlock the game</button>
+    <div class="errmsg">${esc(S.err)}</div>
+  </div>`;
+  const inp = $('#pwIn');
+  $('#pwShow').onclick = ()=>{ inp.type = inp.type==='password' ? 'text' : 'password'; $('#pwShow').textContent = inp.type==='password' ? 'show' : 'hide'; };
+  const go = async ()=>{
+    const pw = inp.value.trim();
+    if(pw.length < 4){ S.err='Make it at least 4 characters.'; render(); return; }
+    $('#pwBtn').disabled = true; $('#pwBtn').textContent = 'Unlocking…';
+    await setPassword(pw);
+    S.err='';
+    if(S.pendingHash){ const h = S.pendingHash; S.pendingHash=null; await loadFromHash(h); return; }
+    S.screen='home'; render();
+  };
+  $('#pwBtn').onclick = go;
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter') go(); });
+  inp.focus();
+}
+function wrongPassword(){
+  forgetPassword();
+  S.err = 'That password doesn’t match the family’s games. Try again.';
+  S.screen='password'; render();
 }
 
 /* ---------- HOME ---------- */
 function renderHome(){
-  const lr = localRoom();
+  if(!S.key){ S.screen='password'; renderPassword(); return; }
+  const name = S.myName || lsGet('spgName') || '';
   app.innerHTML = `
-  ${lr ? `<div class="card" style="margin-bottom:16px">
-    <h2>Your family game 📄</h2>
-    <p class="hint">This phone remembers the game${lr.name?` (you're ${esc(lr.name)})`:''}. No links, no pasting — just check the paper.</p>
-    <button class="btn gold" id="checkBtn">📄 Check the paper</button>
-    <button class="btn small alt" id="forgetBtn" style="margin-top:10px">Forget this game</button>
-  </div>`:''}
   <div class="card">
-    <h2>Got a pass-along message?</h2>
-    <p class="hint">Paste the whole text (or just the game code) below to take your turn or unfold a finished game.</p>
-    <div class="field">
-      <textarea class="paste" id="codeIn" placeholder="Paste it all right here…"></textarea>
-    </div>
-    <button class="btn" id="continueBtn">Take my turn ➜</button>
-    <div class="divider">OR</div>
+    <h2>The paper</h2>
+    <p class="hint" id="paperHint">Looking for the paper…</p>
+    <button class="btn gold" id="checkBtn" disabled>Check the paper</button>
+    <div class="errmsg" id="homeErr">${esc(S.err)}</div>
+  </div>
+  <div class="card">
     <h2>Start a new game</h2>
-    <p class="hint">You write the first sentence, then pass the paper on. It becomes a drawing, then a sentence, then a drawing…</p>
+    <p class="hint">You write the first sentence. Then it becomes a drawing, then a sentence, then a drawing…</p>
     <div class="field">
       <label for="nameNew">Your name</label>
-      <input id="nameNew" maxlength="16" placeholder="e.g. Robert" autocomplete="off">
+      <input id="nameNew" maxlength="24" placeholder="e.g. Han Solo" autocomplete="off" value="${esc(name)}">
     </div>
-    <button class="btn alt" id="startBtn">Write the first sentence ➜</button>
-    <div class="errmsg">${esc(S.err)}</div>
-  </div>`;
-  if($('#checkBtn')) $('#checkBtn').onclick = async ()=>{
-    const lr2 = localRoom(); if(!lr2) return;
-    $('#checkBtn').textContent = 'Checking…';
-    const st = await fetchState(lr2.id);
-    if(!st){ S.err='Couldn\u2019t reach the paper — check your connection and try again.'; render(); return; }
-    S.err=''; S.state = st;
-    if(lr2.name && !S.myName) S.myName = lr2.name;
-    S.screen = st.done ? 'reveal' : (nextIsDrawing() ? 'draw' : 'write');
-    S.revealShown = 1; render();
-  };
-  if($('#forgetBtn')) $('#forgetBtn').onclick = ()=>{ clearLocalRoom(); render(); };
-  $('#continueBtn').onclick = ()=> loadFromInput($('#codeIn').value);
+    <button class="btn" id="startBtn">Write the first sentence</button>
+  </div>
+  <div class="card">
+    <h2>Past games</h2>
+    <div id="pastList" class="hint" style="margin:0">Loading…</div>
+  </div>
+  <div class="card">
+    <h2>Got a pass-along code?</h2>
+    <p class="hint">Backup route. If someone texted you a code or link instead, paste it here.</p>
+    <div class="field"><textarea class="paste" id="codeIn" placeholder="Paste it here…"></textarea></div>
+    <button class="btn alt" id="continueBtn">Take my turn</button>
+  </div>
+  <p class="tiny"><a id="changePw">Change family password on this phone</a></p>`;
   $('#startBtn').onclick = ()=>{
-    const name = $('#nameNew').value.trim();
-    if(!name){ S.err='Give us a name first!'; render(); return; }
-    S.err=''; S.myName=name; S.state={v:1, entries:[]};
+    const nm = $('#nameNew').value.trim();
+    if(!nm){ S.err='Give us a name first.'; render(); return; }
+    S.err=''; S.myName=nm; lsSet('spgName', nm);
+    S.state={v:2, entries:[], t:Date.now()};
     if(/^https?:$/.test(location.protocol)) S.state.u = location.href.split('#')[0];
     S.screen='write'; render();
   };
-  // auto-load if a game rode along in the link (short g= link or full SPG code)
-  let hash = location.hash || '';
-  try{ if(!/SPG|g=/.test(hash) && window.top !== window) hash = window.top.location.hash || hash; }catch(e){}
-  if(/SPG|g=/.test(hash)){
-    resolveInput(decodeURIComponent(hash)).then(st=>{
-      if(st && st!=='fetchfail'){
-        S.state=st; saveLocalRoom();
-        S.screen = st.done ? 'reveal' : (nextIsDrawing()?'draw':'write'); S.revealShown=1; render();
-      } else if(st==='fetchfail'){
-        S.err='This link\u2019s fold couldn\u2019t be loaded \u2014 check your connection and refresh, or ask the sender for the backup full-text code.';
-        render();
-      }
-    });
+  $('#continueBtn').onclick = ()=> loadFromInput($('#codeIn').value);
+  $('#changePw').onclick = ()=>{ forgetPassword(); S.err=''; S.screen='password'; render(); };
+  loadHome();
+}
+async function loadHome(){
+  const hint = $('#paperHint'), btn = $('#checkBtn'), list = $('#pastList');
+  const games = await getIndex();
+  if(!$('#paperHint')) return; // navigated away
+  if(games==='badkey'){ wrongPassword(); return; }
+  S.index = games;
+  const lr = localRoom();
+  let active = games.find(g=>g.id===lr && !g.done) || games.find(g=>!g.done) || null;
+  S.activeGame = active;
+  if(active){
+    const who = active.last ? `${esc(active.last)} just finished fold ${active.n}` : `${esc(active.by)} started it`;
+    hint.innerHTML = `A game is going: ${who}. Tap to see if it’s your turn.`;
+    btn.disabled = false;
+    btn.onclick = async ()=>{
+      btn.disabled = true; btn.textContent = 'Checking…';
+      const st = await fetchState(active.id);
+      if(st==='badkey'){ wrongPassword(); return; }
+      if(!st){ S.err='Couldn’t reach the paper. Check your connection and try again.'; render(); return; }
+      enterState(st);
+    };
+  } else {
+    hint.textContent = games.length ? 'No game in progress right now. Start a new one below.' : 'No games yet. Start the first one below.';
+    btn.classList.add('hidden');
   }
+  if(!games.length){ list.textContent = 'Nothing here yet. Finished games will show up here so you can read them again.'; return; }
+  list.className = 'gamelist';
+  list.innerHTML = games.map(g=>`
+    <button class="gamerow" data-id="${esc(g.id)}">
+      <span class="gdate">${esc(fmtDate(g.t))}</span>
+      <span class="gmain"><span class="gtitle">${esc(g.first || (g.by+'’s game'))}</span><br><span class="gmeta">started by ${esc(g.by)} · ${g.n} fold${g.n===1?'':'s'}</span></span>
+      <span class="gstatus ${g.done?'':'live'}">${g.done?'done':'in play'}</span>
+    </button>`).join('');
+  list.querySelectorAll('.gamerow').forEach(row=>row.onclick = async ()=>{
+    row.style.opacity='.6';
+    const st = await fetchState(row.dataset.id);
+    if(st==='badkey'){ wrongPassword(); return; }
+    if(!st){ S.err='Couldn’t load that game right now.'; render(); return; }
+    enterState(st);
+  });
+}
+async function loadFromInput(text){
+  const st = await resolveInput(text);
+  if(st==='badkey'){ S.err='That code is scrambled with a different family password.'; render(); return; }
+  if(st==='fetchfail'){ S.err='Found the link but couldn’t load the fold. Check your connection.'; render(); return; }
+  if(!st){ S.err='That doesn’t look like a game code. Paste the whole message.'; render(); return; }
+  enterState(st);
+}
+async function loadFromHash(hash){
+  const st = await resolveInput(decodeURIComponent(hash));
+  if(st==='badkey'){ wrongPassword(); return; }
+  if(st && st!=='fetchfail'){ enterState(st); return; }
+  S.err = st==='fetchfail' ? 'This link’s fold couldn’t be loaded. Check your connection and refresh.' : '';
+  S.screen='home'; render();
 }
 
-/* ---------- name field (shared by write & draw) ---------- */
+/* ---------- name field ---------- */
 function nameFieldHtml(){
-  return `<div class="field">
-    <label for="myName">Your name</label>
-    <input id="myName" maxlength="16" placeholder="Who's holding the paper?" autocomplete="off" value="${esc(S.myName)}">
-  </div>`;
+  const name = S.myName || lsGet('spgName') || '';
+  return `<div class="field"><label for="myName">Your name</label>
+    <input id="myName" maxlength="24" placeholder="e.g. Han Solo" autocomplete="off" value="${esc(name)}"></div>`;
 }
-function grabName(){
-  const el = $('#myName');
-  if(el) S.myName = el.value.trim();
-  return S.myName;
-}
+function grabName(){ const el=$('#myName'); if(el){ S.myName=el.value.trim(); if(S.myName) lsSet('spgName', S.myName); } return S.myName; }
 
 /* ---------- WRITE ---------- */
 function renderWrite(){
@@ -418,23 +625,22 @@ function renderWrite(){
     <span class="round-pill">fold ${foldNum()}</span>
     <div class="prompt-label">${first ? 'Start the strip' : 'What is going on in this picture?'}</div>
     ${first
-      ? `<p class="hint">Write any sentence — the weirder, the better. The next person has to draw it.</p>`
-      : `<div class="prev-entry" id="prev"></div>
-         <p class="hint">Describe it in one sentence. Only the last fold is shown — no peeking further back!</p>`}
-    <textarea class="write" id="sentence" maxlength="140" placeholder="${first?'Once upon a Tuesday, a llama learned to parallel park…':'I see…'}"></textarea>
-    <div class="charcount"><span id="cc">0</span>/140</div>
+      ? `<p class="hint">Write anything. The weirder, the better. The next person has to draw it.</p>`
+      : `<div class="prev-entry" id="prev"></div><p class="hint">Describe it. Only the last fold is shown, no peeking further back.</p>`}
+    <textarea class="write" id="sentence" placeholder="${first?'A raccoon borrowed the speedboat and the seagulls are not happy about it…':'I see…'}"></textarea>
     ${first ? '' : nameFieldHtml()}
-    <button class="btn" id="passBtn">Fold it ➜</button>
+    <button class="btn" id="passBtn">Fold it</button>
     <div class="errmsg">${esc(S.err)}</div>
   </div>`;
   if(!first) renderPrevEntry($('#prev'));
   const ta = $('#sentence');
-  ta.addEventListener('input', ()=> $('#cc').textContent = ta.value.length);
+  const grow = ()=>{ ta.style.height='auto'; ta.style.height = Math.max(96, ta.scrollHeight) + 'px'; };
+  ta.addEventListener('input', grow); grow();
   $('#passBtn').onclick = async ()=>{
     const text = ta.value.trim();
-    const name = S.state.entries.length===0 ? S.myName : grabName();
+    const name = first ? S.myName : grabName();
     if(!name){ S.err='Add your name so the family knows who to blame.'; render(); return; }
-    if(!text){ S.err='Write something first — anything!'; render(); return; }
+    if(!text){ S.err='Write something first, anything.'; render(); return; }
     S.err='';
     S.state.entries.push({t:'s', a:name, c:text});
     await gotoPass();
@@ -446,66 +652,100 @@ function renderDraw(){
   app.innerHTML = `
   <div class="card">
     <span class="round-pill">fold ${foldNum()}</span>
-    <div class="prompt-label">Draw this sentence</div>
+    <div class="prompt-label">Draw this</div>
     <div class="prev-entry" id="prev"></div>
+    <div class="pane-tabs" id="paneTabs"></div>
     <div class="toolbar" id="tools"></div>
-    <div class="canvas-holder"><canvas id="pad" width="${W}" height="${H}"></canvas></div>
+    <div class="canvas-holder" id="holder"></div>
+    <p class="hint" style="margin:8px 0 0">Want a comic strip? Tap <b>+ Add a panel</b>. Or add a photo and draw on top of it.</p>
     <div style="height:12px"></div>
     ${nameFieldHtml()}
-    <button class="btn" id="passBtn">Fold it ➜</button>
+    <button class="btn" id="passBtn">Fold it</button>
     <div class="errmsg">${esc(S.err)}</div>
   </div>`;
   renderPrevEntry($('#prev'));
-  const pad = makePad($('#pad'), $('#tools'));
+  const board = makeBoard($('#holder'), $('#tools'), $('#paneTabs'));
   $('#passBtn').onclick = async ()=>{
     const name = grabName();
     if(!name){ S.err='Add your name so the family knows who to blame.'; render(); return; }
-    if(pad.isBlank()){ S.err='A blank page? Give us at least a squiggle!'; render(); return; }
+    if(board.isBlank()){ S.err='A blank page? Give us at least a squiggle.'; render(); return; }
     S.err='';
-    S.state.entries.push({t:'d', a:name, c: pad.exportContent()});
+    S.state.entries.push({t:'d', a:name, c: board.exportContent()});
     await gotoPass();
   };
 }
 
-function makePad(canvas, toolsEl){
+function makeBoard(holder, toolsEl, tabsEl){
+  const tool = {c:0, w:1, e:false, h:false};
+  const panes = []; let active = 0;
+  const fileInput = document.createElement('input');
+  fileInput.type='file'; fileInput.accept='image/*'; fileInput.style.display='none';
+  holder.appendChild(fileInput);
+  fileInput.addEventListener('change', ()=>{
+    const f = fileInput.files && fileInput.files[0];
+    if(f && panes[active]) panes[active].pad.addPhoto(f, buildTools);
+    fileInput.value='';
+  });
+  function addPane(){
+    if(panes.length>=MAX_PANES) return;
+    const cv = document.createElement('canvas');
+    cv.width=W; cv.height=H; cv.className='pad';
+    holder.appendChild(cv);
+    panes.push({cv, pad: makePad(cv, tool)});
+    setActive(panes.length-1);
+  }
+  function removePane(i){
+    if(panes.length<=1) return;
+    holder.removeChild(panes[i].cv); panes.splice(i,1);
+    setActive(Math.min(active, panes.length-1));
+  }
+  function setActive(i){
+    active = i;
+    panes.forEach((p,j)=> p.cv.style.display = j===i ? 'block' : 'none');
+    buildTabs(); buildTools();
+  }
+  function buildTabs(){
+    tabsEl.innerHTML = panes.map((p,i)=>`<button class="tab ${i===active?'sel':''}" data-i="${i}">Panel ${i+1}</button>`).join('')
+      + (panes.length<MAX_PANES ? `<button class="tab add" id="addPane">+ Add a panel</button>` : '')
+      + (panes.length>1 ? `<button class="tab del" id="delPane">Remove this panel</button>` : '');
+    tabsEl.querySelectorAll('.tab[data-i]').forEach(b=> b.onclick = ()=> setActive(+b.dataset.i));
+    const add = $('#addPane'); if(add) add.onclick = addPane;
+    const del = $('#delPane'); if(del) del.onclick = ()=> removePane(active);
+  }
+  function buildTools(){
+    const pad = panes[active].pad;
+    toolsEl.innerHTML = COLORS.map((c,i)=>
+      `<button class="swatch ${i===tool.c&&!tool.e&&!tool.h?'sel':''}" data-i="${i}" style="background:${c}" aria-label="color"></button>`).join('')
+      + SIZES.map((s,i)=>
+      `<button class="sizebtn ${i===tool.w?'sel':''}" data-i="${i}" aria-label="brush size"><span style="width:${Math.min(s+3,20)}px;height:${Math.min(s+3,20)}px"></span></button>`).join('')
+      + `<button class="tool ${tool.h?'sel':''}" id="hilite">Hi-liter</button>
+         <button class="tool ${tool.e?'sel':''}" id="eraser">Eraser</button>
+         <button class="tool" id="undo">Undo</button>
+         <button class="tool" id="clear">Clear</button>
+         <button class="tool" id="addphoto">${pad.hasPhoto()?'Swap photo':'Add photo'}</button>`;
+    toolsEl.querySelectorAll('.swatch').forEach(b=> b.onclick=()=>{ tool.c=+b.dataset.i; tool.e=false; tool.h=false; buildTools(); });
+    toolsEl.querySelectorAll('.sizebtn').forEach(b=> b.onclick=()=>{ tool.w=+b.dataset.i; buildTools(); });
+    $('#hilite').onclick=()=>{ tool.h=!tool.h; tool.e=false; buildTools(); };
+    $('#eraser').onclick=()=>{ tool.e=!tool.e; tool.h=false; buildTools(); };
+    $('#undo').onclick=()=> pad.undo();
+    $('#clear').onclick=()=>{ pad.clear(); buildTools(); };
+    $('#addphoto').onclick=()=> fileInput.click();
+  }
+  addPane();
+  return {
+    isBlank: ()=> panes.every(p=>p.pad.isBlank()),
+    exportContent: ()=>{
+      const cs = panes.filter(p=>!p.pad.isBlank()).map(p=>p.pad.exportContent());
+      return cs.length===1 ? cs[0] : {p: cs};
+    },
+  };
+}
+
+function makePad(canvas, tool){
   const ctx = canvas.getContext('2d');
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
   ctx.lineCap='round'; ctx.lineJoin='round';
-  let colorIdx=0, sizeIdx=1, erasing=false, hiliting=false;
   let strokes=[], current=null, bgImg=null;
-
-  const fileInput = document.createElement('input');
-  fileInput.type='file'; fileInput.accept='image/*'; fileInput.style.display='none';
-  canvas.parentNode.appendChild(fileInput);
-  fileInput.addEventListener('change', ()=>{
-    const f = fileInput.files && fileInput.files[0];
-    if(!f) return;
-    const img = new Image();
-    img.onload = ()=>{ bgImg = img; redraw(); buildTools(); };
-    img.src = URL.createObjectURL(f);
-    fileInput.value='';
-  });
-
-  function buildTools(){
-    toolsEl.innerHTML = COLORS.map((c,i)=>
-      `<button class="swatch ${i===colorIdx&&!erasing&&!hiliting?'sel':''}" data-i="${i}" style="background:${c}" aria-label="color"></button>`).join('')
-      + SIZES.map((s,i)=>
-      `<button class="sizebtn ${i===sizeIdx?'sel':''}" data-i="${i}" aria-label="brush size"><span style="width:${Math.min(s+3,20)}px;height:${Math.min(s+3,20)}px"></span></button>`).join('')
-      + `<button class="tool ${hiliting?'sel':''}" id="hilite">Hi-liter</button>
-         <button class="tool ${erasing?'sel':''}" id="eraser">Eraser</button>
-         <button class="tool" id="undo">Undo</button>
-         <button class="tool" id="clear">Clear</button>
-         <button class="tool" id="addphoto">${bgImg?'📷 Swap photo':'📷 Add photo'}</button>`;
-    toolsEl.querySelectorAll('.swatch').forEach(b=>b.onclick=()=>{colorIdx=+b.dataset.i;erasing=false;buildTools();});
-    toolsEl.querySelectorAll('.sizebtn').forEach(b=>b.onclick=()=>{sizeIdx=+b.dataset.i;buildTools();});
-    $('#hilite').onclick=()=>{hiliting=!hiliting;erasing=false;buildTools();};
-    $('#eraser').onclick=()=>{erasing=!erasing;hiliting=false;buildTools();};
-    $('#undo').onclick=()=>{strokes.pop();redraw();};
-    $('#clear').onclick=()=>{strokes=[];bgImg=null;redraw();buildTools();};
-    $('#addphoto').onclick=()=>fileInput.click();
-  }
-  buildTools();
-
   function pos(ev){
     const r = canvas.getBoundingClientRect();
     return { x:(ev.clientX-r.left)*W/r.width, y:(ev.clientY-r.top)*H/r.height };
@@ -518,10 +758,7 @@ function makePad(canvas, toolsEl){
       ctx.drawImage(bgImg, (W-dw)/2, (H-dh)/2, dw, dh);
     }
   }
-  function redraw(){
-    drawBg();
-    for(const s of strokes) paintLive(s);
-  }
+  function redraw(){ drawBg(); for(const s of strokes) paintLive(s); }
   function paintLive(s){
     ctx.globalAlpha = s.h ? 0.35 : 1;
     ctx.strokeStyle = s.e ? '#fff' : COLORS[s.c];
@@ -537,116 +774,80 @@ function makePad(canvas, toolsEl){
   canvas.addEventListener('touchmove', ev=>ev.preventDefault(), {passive:false});
   canvas.addEventListener('pointerdown', ev=>{
     canvas.setPointerCapture(ev.pointerId);
-    current={c:colorIdx,w:sizeIdx,e:erasing?1:0,h:hiliting?1:0,pts:[pos(ev)]};
+    current={c:tool.c, w:tool.w, e:tool.e?1:0, h:tool.h?1:0, pts:[pos(ev)]};
     strokes.push(current); paintLive(current);
   });
   canvas.addEventListener('pointermove', ev=>{
     if(!current) return;
-    const p = pos(ev);
-    const lp = current.pts[current.pts.length-1];
-    if(Math.hypot(p.x-lp.x, p.y-lp.y) >= 2) { current.pts.push(p); redraw(); }
+    const p = pos(ev), lp = current.pts[current.pts.length-1];
+    if(Math.hypot(p.x-lp.x, p.y-lp.y) >= 2){ current.pts.push(p); redraw(); }
   });
   const up=()=>{ current=null; };
   canvas.addEventListener('pointerup',up);
   canvas.addEventListener('pointercancel',up);
-
-  return {
-    isBlank: ()=> strokes.length===0 && !bgImg,
-    exportContent: ()=>{
-      if(bgImg){
-        redraw(); // ensure photo + ink are painted
-        return { img: canvas.toDataURL('image/jpeg', 0.55) };
-      }
-      return { s: strokes.map(s=>({
-        c:s.c, w:s.w, e:s.e, h:s.h,
-        p: thin(s.pts).flatMap(p=>[Math.round(p.x), Math.round(p.y)])
-      })) };
-    },
-  };
-  /* drop points closer than 2.5px to keep codes small */
   function thin(pts){
     if(pts.length<3) return pts;
     const out=[pts[0]];
-    for(let i=1;i<pts.length-1;i++){
-      const l=out[out.length-1];
-      if(Math.hypot(pts[i].x-l.x, pts[i].y-l.y) >= 2.5) out.push(pts[i]);
-    }
-    out.push(pts[pts.length-1]);
-    return out;
+    for(let i=1;i<pts.length-1;i++){ const l=out[out.length-1]; if(Math.hypot(pts[i].x-l.x, pts[i].y-l.y) >= 2.5) out.push(pts[i]); }
+    out.push(pts[pts.length-1]); return out;
   }
+  return {
+    isBlank: ()=> strokes.length===0 && !bgImg,
+    hasPhoto: ()=> !!bgImg,
+    undo: ()=>{ strokes.pop(); redraw(); },
+    clear: ()=>{ strokes=[]; bgImg=null; redraw(); },
+    addPhoto: (file, done)=>{
+      const img = new Image();
+      img.onload = ()=>{ bgImg = img; redraw(); if(done) done(); };
+      img.src = URL.createObjectURL(file);
+    },
+    exportContent: ()=>{
+      if(bgImg){ redraw(); return { img: canvas.toDataURL('image/jpeg', 0.55) }; }
+      return { s: strokes.map(s=>({ c:s.c, w:s.w, e:s.e, h:s.h, p: thin(s.pts).flatMap(p=>[Math.round(p.x), Math.round(p.y)]) })) };
+    },
+  };
 }
 
 /* ---------- PASS ---------- */
-let passCode='', revealCode='', blobId=null;
+let passCode='', revealCode='', saved=false;
 async function gotoPass(){
   S.screen='pass'; S.passReady=false; render();
+  saved = false;
   if(S.state.room){
-    // someone may have taken this fold while we were drawing — check first
     const latest = await fetchState(S.state.room);
-    if(latest && latest.entries.length !== S.state.entries.length - 1){
-      S.state = latest;
-      S.err = 'Whoops — someone else already added fold ' + latest.entries.length + ' while you were working. Here\u2019s the newest fold instead.';
-      S.screen = latest.done ? 'reveal' : (nextIsDrawing() ? 'draw' : 'write');
-      S.revealShown = 1; render(); return;
+    if(latest && latest!=='badkey' && latest.entries.length !== S.state.entries.length - 1){
+      S.err = 'Someone else already added fold ' + latest.entries.length + ' while you were working. Here’s the newest fold instead.';
+      enterState(latest); return;
     }
-    const ok = await putState(S.state.room, S.state);
-    blobId = ok ? S.state.room : null;
+    saved = await putState(S.state.room, S.state);
   } else {
-    blobId = await storeState(S.state);
-    if(blobId){
-      S.state.room = blobId;
-      await putState(blobId, S.state);   // re-save with the room id inside
-    }
+    const id = await storeState(S.state);
+    if(id){ S.state.room = id; saved = await putState(id, S.state); }
   }
-  saveLocalRoom();
+  if(saved){ saveLocalRoom(); await updateIndex(S.state); }
   passCode = await packState(S.state);
   revealCode = await packState({...S.state, done:true});
   S.passReady=true; render();
 }
-function gameLink(tail){
-  if(!S.state.u) return '';
-  return S.state.u.split('#')[0] + '#' + tail;
-}
-function passMessage(forceLong){
+function gameLink(tail){ return S.state.u ? S.state.u.split('#')[0] + '#' + tail : ''; }
+function passMessage(){
   const n = S.state.entries.length;
-  if(S.state.room && blobId && !forceLong){
-    const link = S.state.u ? '\nFirst time playing? Tap: ' + gameLink('g='+S.state.room) : '';
-    return `\u{1F3A8} Sentence Picture Game \u2014 fold ${n} is done and it\u2019s YOUR turn! Open the game and tap \u201CCheck the paper\u201D.${link}`;
-  }
-  const link = gameLink(passCode);
-  if(link && !forceLong){
-    return `\u{1F3A8} Sentence Picture Game \u2014 fold ${n} is done and it\u2019s YOUR turn! Tap here:\n${link}\n\n(If your turn doesn\u2019t load automatically, copy this whole message, open the game, and paste it in the box.)`;
-  }
-  return `\u{1F3A8} Sentence Picture Game \u2014 fold ${n} is done and it\u2019s YOUR turn!\n`
-    + `1. Open the game (same link we\u2019ve been using)\n`
-    + `2. Copy this WHOLE message\n`
-    + `3. Paste it in the box and tap \u201CTake my turn\u201D\n\n`
-    + passCode;
+  const link = S.state.room && S.state.u ? '\nFirst time? Tap: ' + gameLink('g='+S.state.room) : '';
+  return `Sentence Picture: fold ${n} is done and it’s YOUR turn. Open the game and tap “Check the paper”.${link}`;
+}
+function revealMessage(){
+  const link = S.state.room && S.state.u ? '\nFirst time? Tap: ' + gameLink('g='+S.state.room+'&r=1') : '';
+  return `Sentence Picture: the paper is FULL. Open the game and tap “Check the paper” to unfold everything.${link}`;
+}
+function codeMessage(){
+  return `Sentence Picture: fold ${S.state.entries.length} is done and it’s YOUR turn. Open the game, paste this whole message in the “pass-along code” box, and tap Take my turn.\n\n${passCode}`;
+}
+function codeRevealMessage(){
+  return `Sentence Picture: the paper is FULL. Open the game, paste this whole message in the “pass-along code” box, and unfold everything.\n\n${revealCode}`;
 }
 async function markDoneEverywhere(){
   S.state.done = true;
-  if(S.state.room) await putState(S.state.room, S.state);
-}
-function passMessageNoLink(){
-  return `\u{1F3A8} Sentence Picture Game \u2014 fold ${S.state.entries.length} is done and it\u2019s YOUR turn! Open the game and paste this code:\n\nSPGB.${blobId}`;
-}
-function revealMessageNoLink(){
-  return `\u{1F4DC} Sentence Picture Game \u2014 the paper is FULL! Open the game and paste this code to unfold everything:\n\nSPGB.${blobId}.R`;
-}
-function revealMessage(forceLong){
-  if(S.state.room && blobId && !forceLong){
-    const link = S.state.u ? '\nFirst time? Tap: ' + gameLink('g='+S.state.room+'&r=1') : '';
-    return `\u{1F4DC} Sentence Picture Game \u2014 the paper is FULL! Open the game and tap \u201CCheck the paper\u201D to unfold everything.${link}`;
-  }
-  if(blobId && S.state.u && !forceLong){
-    return `\u{1F4DC} Sentence Picture Game \u2014 the paper is FULL! Tap to unfold everything:\n${gameLink('g='+blobId+'&r=1')}`;
-  }
-  const link = gameLink(revealCode);
-  if(link && !forceLong){
-    return `\u{1F4DC} Sentence Picture Game \u2014 the paper is FULL! Tap to unfold everything:\n${link}\n\n(If it doesn\u2019t unfold automatically, copy this whole message, open the game, and paste it in the box.)`;
-  }
-  return `\u{1F4DC} Sentence Picture Game \u2014 the paper is FULL! Open the game, paste this whole message, and unfold everything:\n\n`
-    + revealCode;
+  if(S.state.room){ await putState(S.state.room, S.state); await updateIndex(S.state); }
 }
 async function shareText(text, btn, doneLabel){
   if(navigator.share){
@@ -655,109 +856,104 @@ async function shareText(text, btn, doneLabel){
   }
   try{
     await navigator.clipboard.writeText(text);
-    const old = btn.textContent;
-    btn.textContent = doneLabel;
+    const old = btn.textContent; btn.textContent = doneLabel;
     setTimeout(()=>{ btn.textContent = old; }, 2500);
-  }catch(e){
-    S.err='Couldn\u2019t open the share sheet — long-press the code box to copy it manually.';
-    render();
-  }
+  }catch(e){ S.err='Couldn’t open the share sheet. Long-press the message box to copy it.'; render(); }
 }
 function renderPass(){
   const n = S.state.entries.length;
-  const nextTask = nextIsDrawing() ? 'draw your sentence' : 'caption your drawing';
+  const nextTask = nextIsDrawing() ? 'draw it' : 'caption it';
   if(!S.passReady){
-    app.innerHTML = `<div class="card"><div class="bigcheck">📬</div>
+    app.innerHTML = `<div class="card"><div class="bigmark">${ICON_DREW.replace('class="ico"','style="width:72px;height:72px;color:#F08BB1"')}</div>
       <h2 style="text-align:center">Folding it up…</h2>
-      <p class="hint" style="text-align:center;margin:0">Packing fold ${n} into a nice short link.</p></div>`;
+      <p class="hint" style="text-align:center;margin:0">Scrambling fold ${n} and tucking it into the lake.</p></div>`;
     return;
   }
   app.innerHTML = `
   <div class="card">
-    <div class="bigcheck">📬</div>
-    <h2 style="text-align:center">Fold ${n} is in!</h2>
-    <p class="hint" style="text-align:center">Now pass the paper: send this to the next player, and they'll ${nextTask}. ${n>=2?'Or if the paper feels full, reveal it instead.':''}</p>
-    <button class="btn" id="shareTurn">📨 Send to the next player</button>
-    ${blobId ? `<button class="btn alt" id="shareTurnNL">✂️ Send without a link (short code only)</button>`:''}
-    ${n>=2 ? `<button class="btn gold" id="shareReveal">📜 We're done — send the big reveal to everyone</button>
-    ${blobId ? `<button class="btn alt" id="shareRevealNL">📜 Reveal without a link (code only)</button>`:''}
-    <button class="btn alt" id="revealNow">👀 Unfold it right here</button>`:''}
-    ${blobId ? '' : `<p class="hint" style="margin-top:10px">⚠️ Couldn't reach the short-link service, so the message contains the full game code — longer, but it works the same.</p>`}
-    <div class="divider">THE MESSAGE</div>
-    <p class="hint">If sharing misbehaves, long-press below, Select All, copy, and text it yourself:</p>
-    <div class="passbox" id="rawmsg"></div>
-    ${blobId ? `<button class="btn small alt" id="longCode">Send as full-text code instead (backup)</button>`:''}
-    <div class="divider">GOT THE NEXT FOLD ALREADY?</div>
-    <p class="hint">If someone passed the paper back to you, paste their message or link here:</p>
-    <div class="field"><textarea class="paste" id="nextIn" placeholder="Paste the pass-along message…"></textarea></div>
-    <button class="btn alt" id="takeNext">Take my turn ➜</button>
+    <h2 style="text-align:center">Fold ${n} is in</h2>
+    <p class="hint" style="text-align:center">${saved
+      ? `The paper is saved. Nudge the next player: they open the game, tap <b>Check the paper</b>, and ${nextTask}.`
+      : `<b>Heads up:</b> the paper couldn’t be saved to the lake (no connection?). Use the full-text code below so this fold isn’t lost.`}</p>
+    ${saved ? `<button class="btn" id="shareTurn">Nudge the next player</button>` : ''}
+    ${n>=2 && saved ? `<button class="btn gold" id="shareReveal">We’re done, tell everyone to unfold it</button>` : ''}
+    ${n>=2 ? `<button class="btn alt" id="revealNow">Unfold it right here</button>` : ''}
+    <div class="divider">BACKUP</div>
+    <p class="hint">If someone can’t get to the paper, send the whole fold as a text code instead. It’s long, but it always works.</p>
+    <button class="btn alt" id="codeTurn">Send as a full-text code</button>
+    ${n>=2 ? `<button class="btn alt" id="codeReveal">Send the reveal as a full-text code</button>` : ''}
+    <div class="divider">PAPER COME BACK TO YOU?</div>
+    <p class="hint">When it’s your turn again, you can check from right here.</p>
+    <button class="btn lake" id="checkHere">Check the paper</button>
+    <div class="field" style="margin-top:14px"><textarea class="paste" id="nextIn" placeholder="…or paste a pass-along code here"></textarea></div>
+    <button class="btn alt" id="takeNext">Take my turn from this code</button>
+    <button class="btn alt" id="homeBtn">Back to the dock</button>
     <div class="errmsg">${esc(S.err)}</div>
   </div>`;
-  $('#rawmsg').textContent = passMessage();
-  $('#shareTurn').onclick = e => shareText(passMessage(), e.target, '✅ Copied — paste it in a text');
-  if($('#shareTurnNL')) $('#shareTurnNL').onclick = e => shareText(passMessageNoLink(), e.target, '✅ Copied — paste it in a text');
-  if($('#shareReveal')) $('#shareReveal').onclick = async e => { await markDoneEverywhere(); shareText(revealMessage(), e.target, '✅ Copied — paste it in the group text'); };
-  if($('#shareRevealNL')) $('#shareRevealNL').onclick = async e => { await markDoneEverywhere(); shareText(revealMessageNoLink(), e.target, '✅ Copied — paste it in the group text'); };
+  if($('#shareTurn')) $('#shareTurn').onclick = e => shareText(passMessage(), e.target, 'Copied, paste it in a text');
+  if($('#shareReveal')) $('#shareReveal').onclick = async e => { await markDoneEverywhere(); shareText(revealMessage(), e.target, 'Copied, paste it in the group text'); };
   if($('#revealNow')) $('#revealNow').onclick = async ()=>{ await markDoneEverywhere(); S.screen='reveal'; S.revealShown=1; render(); };
-  if($('#longCode')) $('#longCode').onclick = e => shareText(passMessage(true), e.target, '✅ Copied full code');
+  $('#codeTurn').onclick = e => shareText(codeMessage(), e.target, 'Copied');
+  if($('#codeReveal')) $('#codeReveal').onclick = async e => { await markDoneEverywhere(); shareText(codeRevealMessage(), e.target, 'Copied'); };
+  $('#checkHere').onclick = async e=>{
+    const id = S.state.room;
+    if(!id){ S.err='This game isn’t saved to the lake, so there’s nothing to check yet.'; render(); return; }
+    e.target.disabled=true; e.target.textContent='Checking…';
+    const st = await fetchState(id);
+    if(st==='badkey'){ wrongPassword(); return; }
+    if(!st){ S.err='Couldn’t reach the paper. Try again in a moment.'; render(); return; }
+    if(st.entries.length === S.state.entries.length && !st.done){ S.err='Still waiting on the next player.'; render(); return; }
+    enterState(st);
+  };
   $('#takeNext').onclick = ()=> loadFromInput($('#nextIn').value);
-}
-async function loadFromInput(text){
-  const st = await resolveInput(text);
-  if(st==='fetchfail'){ S.err='Found the link but couldn\u2019t load the fold — check your connection, or ask the sender to use the backup full-text code.'; render(); return; }
-  if(!st){ S.err='Hmm, that doesn\u2019t look like a game message. Paste the whole thing.'; render(); return; }
-  S.err=''; S.state = st;
-  saveLocalRoom();
-  S.screen = st.done ? 'reveal' : (nextIsDrawing() ? 'draw' : 'write');
-  S.revealShown = 1;
-  render();
+  $('#homeBtn').onclick = ()=>{ S.err=''; S.screen='home'; render(); };
 }
 
 /* ---------- REVEAL ---------- */
 function renderReveal(){
-  const entries = S.state.entries;
-  const n = entries.length;
+  const entries = S.state.entries, n = entries.length;
   let panels='';
   for(let i=0;i<Math.min(S.revealShown,n);i++){
     const e = entries[i];
     panels += `<div class="panel" data-p="${i}">
-      <div class="who">${esc(e.a)} ${e.t==='s'?'wrote':'drew'}</div>
-      ${e.t==='s' ? `<div class="sentence">“${esc(e.c)}”</div>` : drawingHtml(e)}
+      <div class="who">${e.t==='s'?ICON_WROTE:ICON_DREW}${esc(e.a)} ${e.t==='s'?'wrote':'drew'}</div>
+      ${e.t==='s' ? `<div class="sentence">${esc(e.c)}</div>` : drawingHtml(e)}
     </div>`;
   }
   const done = S.revealShown >= n;
   app.innerHTML = `
   <div class="strip-shadowbox"><div class="strip">${panels}
-    ${done?'':`<button class="foldbtn" id="unfoldBtn">Unfold the next one 👇</button>`}
+    ${done?'':`<button class="foldbtn" id="unfoldBtn">Unfold the next one</button>`}
   </div></div>
   <div class="reveal-actions">
-    ${done ? `<button class="btn gold" id="shareReveal2">📜 Send this reveal to the family</button>
-    <button class="btn alt" id="againBtn">Start a new game</button>`:''}
+    ${done ? '' : `<button class="btn alt" id="showAll">Show the whole strip</button>`}
+    ${done && S.state.room ? `<button class="btn gold" id="shareReveal2">Tell the family to unfold it</button>` : ''}
+    <button class="btn alt" id="againBtn">Back to the dock</button>
   </div>`;
-  app.querySelectorAll('.panel[data-p]').forEach(pn=>{
-    const e = entries[+pn.dataset.p];
-    if(e.t==='d') hydrateDrawing(pn, e);
-  });
+  app.querySelectorAll('.panel[data-p]').forEach(pn=>{ const e = entries[+pn.dataset.p]; if(e.t==='d') hydrateDrawing(pn, e); });
   if($('#unfoldBtn')) $('#unfoldBtn').onclick = ()=>{
     S.revealShown++; render();
-    const panels = app.querySelectorAll('.panel');
-    const newest = panels[panels.length-1];
+    const ps = app.querySelectorAll('.panel'); const newest = ps[ps.length-1];
     if(newest) setTimeout(()=> newest.scrollIntoView({behavior:'smooth', block:'nearest'}), 60);
   };
-  if($('#shareReveal2')) $('#shareReveal2').onclick = async e=>{
-    if(!blobId) blobId = await storeState({...S.state, done:true});
-    if(blobId && S.state.u){
-      shareText(`\u{1F4DC} Sentence Picture Game \u2014 the paper is FULL! Tap to unfold everything:\n${gameLink('g='+blobId+'&r=1')}`, e.target, '✅ Copied — paste it in the group text');
-    } else {
-      revealCode = revealCode || await packState({...S.state, done:true});
-      shareText(revealMessage(), e.target, '✅ Copied — paste it in the group text');
-    }
-  };
-  if($('#againBtn')) $('#againBtn').onclick = ()=>{ S.state=null; S.screen='home'; S.err=''; blobId=null; render(); };
+  if($('#showAll')) $('#showAll').onclick = ()=>{ S.revealShown = n; render(); };
+  if($('#shareReveal2')) $('#shareReveal2').onclick = async e=>{ await markDoneEverywhere(); shareText(revealMessage(), e.target, 'Copied, paste it in the group text'); };
+  $('#againBtn').onclick = ()=>{ S.state=null; S.screen='home'; S.err=''; render(); };
 }
 
 /* ---------- boot ---------- */
-render();
+(async function boot(){
+  await loadPassword();
+  let hash = location.hash || '';
+  try{ if(!/SPG|g=/.test(hash) && window.top !== window) hash = window.top.location.hash || hash; }catch(e){}
+  if(/SPG|g=/.test(hash)){
+    history.replaceState(null, '', location.pathname + location.search);
+    if(!S.key){ S.pendingHash = hash; S.screen='password'; render(); return; }
+    await loadFromHash(hash); return;
+  }
+  S.screen = S.key ? 'home' : 'password';
+  render();
+})();
 </script>
 </body>
 </html>
