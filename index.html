@@ -675,16 +675,11 @@ function playIntro(){
     document.body.appendChild(overlay);
     overlay.addEventListener('click', finish);
 
-    const D = 5600;
-    const glide = 'cubic-bezier(.45,0,.25,1)';
+    const D = 7000;
     const tour = img.animate([
-      {offset:0,    transform:view(0, 0),       opacity:0, borderColor:'transparent', borderRadius:'0px'},           // the title
-      {offset:0.06, transform:view(0, 0),       opacity:1, easing:glide},
-      {offset:0.14, transform:view(0.02, 0.05), easing:glide},                                   // linger on the title
-      {offset:0.38, transform:view(0.97, 0.12), easing:glide},                                   // across the top: gulls, the Ultimate Warrior
-      {offset:0.48, transform:view(1, 1),       easing:glide},                                   // down to the umbrella raccoon
-      {offset:0.72, transform:view(0.06, 0.92), easing:glide, borderColor:'transparent'},        // back along the water to the Flying Angel IV
-      {offset:0.78, transform:view(0.06, 0.92), easing:'cubic-bezier(.6,0,.2,1)', borderColor:'transparent', borderRadius:'0px'},
+      {offset:0,    transform:view(0, 0.5), opacity:0, borderColor:'transparent', borderRadius:'0px'},   // left edge: the title
+      {offset:0.05, transform:view(0, 0.5), opacity:1, easing:'cubic-bezier(.35,0,.65,1)'},
+      {offset:0.78, transform:view(1, 0.5), easing:'cubic-bezier(.6,0,.2,1)', borderColor:'transparent', borderRadius:'0px'}, // slow pan to the right edge
       {offset:1,    transform:`translate(0px,0px) scale(${1/Z})`, opacity:1, borderColor:'#121212', borderRadius:(16*Z)+'px'} // shrink into the banner spot
     ], {duration:D, fill:'forwards'});
     hint.animate([{opacity:0},{opacity:1,offset:.1},{opacity:1,offset:.7},{opacity:0,offset:.8},{opacity:0}], {duration:D, fill:'forwards'});
