@@ -5,30 +5,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Sentence Picture Game</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Shantell+Sans:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --lake:#0F4C5C; --lake-deep:#0B3A47; --lake-light:#1E7F91; --foam:#CFEDF2;
-  --paper:#FFF8E7; --paper-shade:#F3E9D2; --line:#DCCFB3;
-  --ink:#2B2A33; --ink-soft:#5F5B6B;
-  --mahogany:#8B3A1E; --mahogany-deep:#5E2512;
-  --varnish:#E0943E; --varnish-deep:#B86F22;
-  --coon:#7F8891; --coon-dark:#3A3842;
-  --jelly:#F08BB1; --redpen:#D9534F;
+  /* comic palette sampled from the banner, logo and boat */
+  --ink:#121212; --ink-soft:#4A4A52;
+  --paper:#FFFFFF; --paper-shade:#F2F4F7; --line:#121212; --line-soft:#C9CED6;
+  --red:#E8291C; --red-deep:#A8170D;
+  --orange:#FF8A1F;
+  --yellow:#FFE11A; --yellow-deep:#E0A800;
+  --cyan:#19B7F2;
+  --blue:#1468D6; --blue-deep:#0B3F8C;
+  --navy:#1B2D6B;
+  --sky:#EAF7FF;
+  --redpen:#E8291C;
   --radius:14px;
+  --comic-shadow:5px 5px 0 var(--ink);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{background:#0B3A47}
+html{background:#fff}
 html,body{min-height:100%}
 body{
   font-family:'Nunito',system-ui,sans-serif;color:var(--ink);
-  background:linear-gradient(180deg,#6EC6F2 0,#3FA3D8 160px,#1E7F91 360px,#0F4C5C 560px,#0B3A47 800px) no-repeat #0B3A47;
+  background:#fff;
   min-height:100%;display:flex;flex-direction:column;align-items:center;padding:18px 14px 60px;
 }
 h1,h2,h3{font-family:'Shantell Sans','Comic Sans MS',cursive}
 button{font-family:inherit;cursor:pointer;border:none}
 input,textarea{font-family:inherit}
-a{color:var(--foam)}
+a{color:var(--blue)}
+.card h2,.dock h2.board{font-family:'Luckiest Guy','Shantell Sans',cursive;font-weight:400;letter-spacing:.5px}
 :root{--page:1080px}
 .wrap{width:100%;max-width:var(--page)}
 .brand{width:100%;max-width:var(--page);margin:0 auto 18px;user-select:none}
@@ -45,31 +51,31 @@ a{color:var(--foam)}
 .canvas-holder{max-width:calc(74vh * 4 / 3);margin:0 auto}
 .panel .drawing,.panel .comic{max-width:calc(70vh * 4 / 3);margin-left:auto;margin-right:auto}
 .prev-entry .drawing{max-width:calc(48vh * 4 / 3);margin:0 auto}
-.banner{display:block;width:100%;height:auto;border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.35);border:3px solid #fff}
+.banner{display:block;width:100%;height:auto;border-radius:16px;box-shadow:var(--comic-shadow);border:3px solid var(--ink)}
 .brand.locked{display:none}
 .banner-btn{position:relative;display:block;width:100%;padding:0;background:none;border:none;cursor:zoom-in;border-radius:16px}
-.banner-btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
-.explore-tag{position:absolute;right:12px;bottom:12px;display:flex;align-items:center;gap:6px;background:rgba(15,40,52,.78);color:#fff;font-weight:800;font-size:12px;padding:6px 10px;border-radius:999px;pointer-events:none;opacity:.9}
+.banner-btn:focus-visible{outline:3px solid var(--blue);outline-offset:4px}
+.explore-tag{position:absolute;right:12px;bottom:12px;display:flex;align-items:center;gap:6px;background:var(--ink);color:#fff;font-weight:800;font-size:12px;padding:6px 10px;border-radius:999px;pointer-events:none;opacity:.92}
 .explore-tag svg{width:14px;height:14px}
-.viewer{position:fixed;inset:0;z-index:60;background:#06161E;display:flex;flex-direction:column}
+.viewer{position:fixed;inset:0;z-index:60;background:#fff;display:flex;flex-direction:column}
 .viewer-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;cursor:grab;overscroll-behavior:contain}
 .viewer-scroll.dragging{cursor:grabbing}
 .viewer-stage{display:flex;align-items:center;justify-content:center;min-width:100%;min-height:100%}
 .viewer-img{display:block;max-width:none;user-select:none;-webkit-user-drag:none;border-radius:6px}
-.viewer-bar{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(0,0,0,.35)}
-.viewer-bar button{min-width:46px;height:42px;padding:0 14px;border-radius:12px;background:rgba(255,255,255,.14);color:#fff;font-weight:800;font-size:18px}
-.viewer-bar button.close{background:#fff;color:var(--ink);font-size:15px}
-.viewer-hint{position:absolute;top:calc(12px + env(safe-area-inset-top));left:0;right:0;text-align:center;color:rgba(255,255,255,.8);font-weight:800;font-size:13px;pointer-events:none;transition:opacity .6s}
+.viewer-bar{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:3px solid var(--ink)}
+.viewer-bar button{min-width:46px;height:42px;padding:0 14px;border-radius:12px;background:#fff;color:var(--ink);border:3px solid var(--ink);font-weight:800;font-size:18px}
+.viewer-bar button.close{background:var(--red);color:#fff;font-size:15px}
+.viewer-hint{position:absolute;top:calc(12px + env(safe-area-inset-top));left:0;right:0;text-align:center;color:var(--ink);font-weight:800;font-size:13px;pointer-events:none;transition:opacity .6s;text-shadow:0 0 6px #fff,0 0 6px #fff}
 .brand.intro .banner,.brand.intro .explore-tag{visibility:hidden}
 #app.intro-hold{opacity:0}
 #app.intro-in{animation:introCards .6s ease both}
 @keyframes introCards{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.intro-overlay{position:fixed;inset:0;z-index:50;background:rgba(8,40,52,.72);cursor:pointer;overflow:hidden}
-.intro-img{position:fixed;transform-origin:50% 50%;border-radius:16px;border:3px solid #fff;box-shadow:0 30px 60px rgba(0,0,0,.45);will-change:transform,opacity,filter;pointer-events:none}
-.intro-skip{position:fixed;bottom:22px;left:0;right:0;text-align:center;color:rgba(255,255,255,.75);font-weight:800;font-size:13px;letter-spacing:1px;pointer-events:none}
+.intro-overlay{position:fixed;inset:0;z-index:50;background:#fff;cursor:pointer;overflow:hidden}
+.intro-img{position:fixed;transform-origin:50% 50%;max-width:none;will-change:transform,opacity;pointer-events:none}
+.intro-skip{position:fixed;bottom:22px;left:0;right:0;text-align:center;color:var(--ink);font-weight:800;font-size:13px;letter-spacing:1px;pointer-events:none;text-shadow:0 0 6px #fff,0 0 6px #fff,0 0 6px #fff}
 .dock{max-width:520px;margin:0 auto;position:relative}
-.logo{display:block;width:min(86vw,470px,42vh);height:auto;margin:0 auto -4px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.28))}
-.dock h2.board{font-family:'Shantell Sans',cursive;color:#fff;text-align:center;font-size:clamp(22px,5.4vw,30px);font-weight:800;line-height:1.1;text-shadow:0 2px 0 rgba(0,0,0,.25);margin:4px 0 6px}
+.logo{display:block;width:min(86vw,470px,42vh);height:auto;margin:0 auto -4px}
+.dock h2.board{font-family:'Luckiest Guy','Shantell Sans',cursive;letter-spacing:.5px;font-weight:400;color:var(--ink);text-align:center;font-size:clamp(24px,6vw,34px);line-height:1.1;margin:6px 0 8px}
 .boat-wrap{position:relative;width:min(84vw,420px,40vh);margin:0 auto;z-index:1}
 .boat{display:block;width:100%;height:auto;transform-origin:50% 90%;
   -webkit-mask-image:linear-gradient(#000 82%,transparent 99%);mask-image:linear-gradient(#000 82%,transparent 99%);
@@ -77,39 +83,33 @@ a{color:var(--foam)}
 .dock .card{margin-top:-34px;z-index:2}
 .dock .lock-note{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--ink-soft);font-weight:700;margin-top:12px;line-height:1.45}
 .dock .lock-note svg{flex:none;width:14px;height:14px;margin-top:2px}
-.brand h1{font-size:clamp(28px,6.5vw,40px);font-weight:800;line-height:1.1;text-shadow:0 1px 0 rgba(255,255,255,.45)}
-.brand h1 .w1{color:var(--mahogany)}
-.brand h1 .w2{color:#1F5F6E}
-.brand .sub{font-size:14px;font-weight:700;margin-top:2px;color:#5A3E2A}
-.scene{width:100%;height:auto;display:block;margin-top:4px}
 .card{
   background:var(--paper);border-radius:var(--radius);
-  box-shadow:0 14px 34px rgba(0,0,0,.34), 0 2px 0 rgba(255,255,255,.35) inset;
+  border:3px solid var(--ink);box-shadow:var(--comic-shadow);
   padding:22px 20px 24px;position:relative;
 }
 .card + .card{margin-top:16px}
-.card::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;background:var(--varnish);opacity:.7;border-radius:2px}
-.card h2{font-size:22px;font-weight:800;margin-bottom:6px}
+.card h2{font-size:24px;margin-bottom:6px;line-height:1.1}
 .card .hint{color:var(--ink-soft);font-size:14px;line-height:1.5;margin-bottom:14px}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
-.field input{width:100%;padding:12px 14px;font-size:17px;font-weight:700;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:10px;outline:none}
-.field input:focus{border-color:var(--lake-light)}
-.btn{display:block;width:100%;padding:14px;border-radius:12px;font-size:17px;font-weight:800;background:var(--mahogany);color:#fff;box-shadow:0 4px 0 var(--mahogany-deep);transition:transform .06s,box-shadow .06s}
-.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--mahogany-deep)}
-.btn.alt{background:var(--paper-shade);color:var(--ink);box-shadow:0 4px 0 #d9ccaf}
-.btn.gold{background:var(--varnish);color:#2B1A0E;box-shadow:0 4px 0 var(--varnish-deep)}
-.btn.lake{background:var(--lake-light);color:#fff;box-shadow:0 4px 0 var(--lake)}
+.field input{width:100%;padding:12px 14px;font-size:17px;font-weight:700;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:10px;outline:none}
+.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(20,104,214,.18)}
+.btn{display:block;width:100%;padding:13px;border-radius:12px;font-size:17px;font-weight:800;background:var(--red);color:#fff;border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink);transition:transform .06s,box-shadow .06s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn.alt{background:#fff;color:var(--ink)}
+.btn.gold{background:var(--yellow);color:var(--ink)}
+.btn.lake{background:var(--blue);color:#fff}
 .btn.small{width:auto;padding:9px 16px;font-size:14px;display:inline-block}
 .btn:disabled{opacity:.45;cursor:default;transform:none}
 .btn + .btn{margin-top:10px}
 .divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--ink-soft);font-weight:800;font-size:12px;letter-spacing:2px}
-.divider::before,.divider::after{content:"";flex:1;height:2px;background:var(--line);border-radius:2px}
+.divider::before,.divider::after{content:"";flex:1;height:3px;background:var(--ink);border-radius:2px}
 .errmsg{color:var(--redpen);font-weight:700;font-size:14px;margin-top:10px;min-height:18px}
 .okmsg{color:#2E7D4F;font-weight:700;font-size:14px;margin-top:10px}
-.prompt-label{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--lake-light);margin-bottom:8px}
-.round-pill{float:right;background:var(--lake);color:var(--paper);border-radius:999px;padding:3px 12px;font-size:12px;font-weight:800}
-.prev-entry{background:#fff;border:2px dashed var(--line);border-radius:12px;padding:14px;margin-bottom:16px}
+.prompt-label{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+.round-pill{float:right;background:var(--navy);color:#fff;border-radius:999px;padding:3px 12px;font-size:12px;font-weight:800}
+.prev-entry{background:var(--sky);border:3px dashed var(--ink);border-radius:12px;padding:14px;margin-bottom:16px}
 .prev-entry .who{font-size:12px;font-weight:800;color:var(--ink-soft);margin-bottom:6px;display:flex;align-items:center;gap:6px}
 .prev-entry .sentence{font-family:'Shantell Sans',cursive;font-size:20px;font-weight:700;line-height:1.35;white-space:pre-wrap}
 .drawing{width:100%;border-radius:8px;display:block;background:#fff}
@@ -119,58 +119,58 @@ a{color:var(--foam)}
 .comic-pane .drawing{border-radius:0}
 @media (max-width:480px){.comic{grid-template-columns:1fr}}
 textarea.write{
-  width:100%;min-height:96px;resize:none;overflow:hidden;
+  width:100%;min-height:144px;resize:none;overflow:hidden;
   background:repeating-linear-gradient(transparent,transparent 31px,rgba(43,42,51,.14) 31px,rgba(43,42,51,.14) 32px);
-  border:2px solid var(--line);border-radius:10px;padding:8px 14px;
+  border:3px solid var(--ink);border-radius:10px;padding:8px 14px;
   font-family:'Shantell Sans',cursive;font-size:19px;font-weight:600;line-height:32px;color:var(--ink);outline:none;
 }
-textarea.write:focus{border-color:var(--lake-light)}
-textarea.paste{width:100%;min-height:90px;resize:vertical;border:2px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;color:var(--ink);outline:none;word-break:break-all}
-textarea.paste:focus{border-color:var(--lake-light)}
+textarea.write:focus{border-color:var(--blue)}
+textarea.paste{width:100%;min-height:90px;resize:vertical;border:3px solid var(--ink);border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;color:var(--ink);outline:none;word-break:break-all}
+textarea.paste:focus{border-color:var(--blue)}
 .pane-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
-.tab{padding:7px 12px;border-radius:999px;background:#fff;border:2px solid var(--line);font-weight:800;font-size:13px;color:var(--ink)}
-.tab.sel{border-color:var(--lake-light);background:#E3F3F6}
-.tab.add{border-style:dashed;color:var(--lake-light)}
+.tab{padding:7px 12px;border-radius:999px;background:#fff;border:2.5px solid var(--ink);font-weight:800;font-size:13px;color:var(--ink)}
+.tab.sel{background:var(--yellow)}
+.tab.add{border-style:dashed;color:var(--blue)}
 .tab.del{color:var(--redpen)}
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}
-.swatch{width:32px;height:32px;border-radius:50%;border:3px solid transparent;box-shadow:0 1px 3px rgba(0,0,0,.25)}
-.swatch.sel{border-color:var(--ink);transform:scale(1.12)}
-.sizebtn{width:36px;height:32px;border-radius:8px;background:#fff;border:2px solid var(--line);display:flex;align-items:center;justify-content:center}
-.sizebtn.sel{border-color:var(--lake-light);background:#E3F3F6}
+.swatch{width:32px;height:32px;border-radius:50%;border:2.5px solid var(--ink)}
+.swatch.sel{box-shadow:0 0 0 3px #fff,0 0 0 5.5px var(--ink);transform:scale(1.06)}
+.sizebtn{width:36px;height:32px;border-radius:8px;background:#fff;border:2.5px solid var(--ink);display:flex;align-items:center;justify-content:center}
+.sizebtn.sel{background:var(--yellow)}
 .sizebtn span{border-radius:50%;background:var(--ink);display:block}
-.tool{height:32px;padding:0 12px;border-radius:8px;background:#fff;border:2px solid var(--line);font-weight:800;font-size:13px;color:var(--ink)}
-.tool.sel{border-color:var(--lake-light);background:#E3F3F6}
-.canvas-holder{border:2px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;touch-action:none;overscroll-behavior:contain}
+.tool{height:32px;padding:0 12px;border-radius:8px;background:#fff;border:2.5px solid var(--ink);font-weight:800;font-size:13px;color:var(--ink)}
+.tool.sel{background:var(--yellow)}
+.canvas-holder{border:3px solid var(--ink);border-radius:12px;overflow:hidden;background:#fff;touch-action:none;overscroll-behavior:contain}
 canvas.pad{display:block;width:100%;height:auto;touch-action:none;-webkit-user-select:none;user-select:none}
 .passbox{background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px;margin-bottom:14px;max-height:150px;overflow:auto;font-size:12px;font-weight:600;word-break:break-all;color:var(--ink-soft);white-space:pre-wrap}
 .bigmark{text-align:center;margin:4px 0 10px}
 .bigmark svg{width:72px;height:72px}
 .strip{perspective:1200px}
-.panel{background:var(--paper);padding:16px 18px;border-bottom:2px dashed rgba(43,42,51,.22);transform-origin:top center;animation:unfold .55s cubic-bezier(.34,1.3,.5,1) both}
+.panel{background:var(--paper);padding:16px 18px;border-bottom:3px dashed var(--ink);transform-origin:top center;animation:unfold .55s cubic-bezier(.34,1.3,.5,1) both}
 .panel:first-child{border-radius:var(--radius) var(--radius) 0 0}
-.panel .who{font-size:12px;font-weight:800;letter-spacing:1px;color:var(--lake-light);text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.panel .who{font-size:12px;font-weight:800;letter-spacing:1px;color:var(--blue);text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px}
 .panel .sentence{font-family:'Shantell Sans',cursive;font-size:20px;font-weight:700;line-height:1.35;white-space:pre-wrap}
 @keyframes unfold{from{transform:rotateX(-88deg);opacity:0;box-shadow:0 30px 40px rgba(0,0,0,.4)}to{transform:rotateX(0);opacity:1;box-shadow:none}}
 @media (prefers-reduced-motion: reduce){.panel{animation:none}}
-.foldbtn{width:100%;padding:15px;border-radius:0 0 var(--radius) var(--radius);background:var(--varnish);color:#2B1A0E;font-family:'Shantell Sans',cursive;font-size:17px;font-weight:800;box-shadow:0 10px 24px rgba(0,0,0,.3)}
-.strip-shadowbox{border-radius:var(--radius);box-shadow:0 14px 34px rgba(0,0,0,.34);overflow:hidden}
+.foldbtn{width:100%;padding:15px;border-radius:0 0 11px 11px;background:var(--yellow);color:var(--ink);font-family:'Luckiest Guy','Shantell Sans',cursive;font-size:20px;letter-spacing:.5px}
+.strip-shadowbox{border-radius:var(--radius);border:3px solid var(--ink);box-shadow:var(--comic-shadow);overflow:hidden}
 .reveal-actions{margin-top:18px}
 .gamelist{display:flex;flex-direction:column;gap:8px}
-.gamerow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--ink)}
+.gamerow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:2.5px solid var(--ink);border-radius:10px;padding:10px 12px;color:var(--ink)}
 .gamerow:active{background:var(--paper-shade)}
 .gamerow .gdate{font-size:12px;font-weight:800;color:var(--ink-soft);min-width:58px}
 .gamerow .gmain{flex:1;min-width:0}
 .gamerow .gtitle{font-family:'Shantell Sans',cursive;font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gamerow .gmeta{font-size:12px;color:var(--ink-soft);font-weight:700}
 .gamerow .gstatus{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--paper-shade);color:var(--ink-soft)}
-.gamerow .gstatus.live{background:#DDF3E4;color:#2E7D4F}
-.tiny{color:rgba(255,255,255,.7);font-size:12px;font-weight:700;text-align:center;margin-top:16px}
-.tiny a{color:var(--foam);text-decoration:underline;cursor:pointer}
+.gamerow .gstatus.live{background:var(--yellow);color:var(--ink)}
+.tiny{color:var(--ink-soft);font-size:12px;font-weight:700;text-align:center;margin-top:16px}
+.tiny a{color:var(--blue);text-decoration:underline;cursor:pointer}
 .pwrow{display:flex;gap:8px}
 .pwrow input{flex:1}
-.pwrow button{width:auto;padding:0 14px;border-radius:10px;background:var(--paper-shade);font-weight:800;font-size:13px}
+.pwrow button{width:auto;padding:0 14px;border-radius:10px;background:#fff;border:3px solid var(--ink);font-weight:800;font-size:13px}
 .ico{width:16px;height:16px;flex:none}
-footer{margin-top:26px;color:rgba(255,255,255,.55);font-size:12px;font-weight:700;text-align:center;max-width:var(--page);line-height:1.5}
+footer{margin-top:26px;color:var(--ink-soft);font-size:12px;font-weight:700;text-align:center;max-width:var(--page);line-height:1.5}
 .hidden{display:none !important}
 </style>
 </head>
@@ -186,7 +186,7 @@ footer{margin-top:26px;color:rgba(255,255,255,.55);font-size:12px;font-weight:70
 
 <script>
 /* =====================================================
-   Sentence Picture: Raccoon Regatta
+   Sentence Picture Game
    - one shared paper per game, stored encrypted in Pantry
    - "Check the paper" finds the active game, no links/pasting
    - past games archive
@@ -195,7 +195,7 @@ footer{margin-top:26px;color:rgba(255,255,255,.55);font-size:12px;font-weight:70
 const $ = s => document.querySelector(s);
 const app = $('#app');
 const W = 1000, H = 750;
-const COLORS = ['#2B2A33','#8B3A1E','#D9534F','#2E8B57','#E0943E','#1E7F91','#C9A227','#7F8891','#F08BB1','#6C4AB0'];
+const COLORS = ['#121212','#8B4513','#E8291C','#22A63E','#FF8A1F','#1468D6','#FFD21A','#8A8F98','#FF6FAE','#7B3FD1'];
 const SIZES = [2,5,10,20];
 const MAX_PANES = 6;
 
@@ -394,6 +394,12 @@ async function resolveInput(text){
 }
 
 /* ---------- helpers ---------- */
+const EXAMPLE_SENTENCES = [
+  'Frosty the Snowman and Captain Kirk go looking for Spock.',
+  'Raccoons decided to join the party.',
+  'Pee-Wee Herman and Shaggy meet up to solve the mystery of the wet blanket.',
+];
+function pickExample(){ return EXAMPLE_SENTENCES[Math.floor(Math.random()*EXAMPLE_SENTENCES.length)]; }
 function esc(str){ const d=document.createElement('div'); d.textContent=str==null?'':String(str); return d.innerHTML; }
 function safeImg(src){ return (typeof src==='string' && src.startsWith('data:image/')) ? src : ''; }
 function lastEntry(){ return S.state.entries[S.state.entries.length-1]; }
@@ -486,6 +492,7 @@ function renderPassword(){
     </div>
   </div>`;
   const inp = $('#pwIn'), boat = $('#boat'), btn = $('#pwBtn'), err = $('#pwErr');
+  preloadFullBanner();
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   $('#pwShow').onclick = ()=>{ inp.type = inp.type==='password' ? 'text' : 'password'; $('#pwShow').textContent = inp.type==='password' ? 'show' : 'hide'; };
   const fail = (msg, line)=>{
@@ -600,6 +607,10 @@ function openBannerViewer(){
 document.addEventListener('click', e=>{ if(e.target.closest && e.target.closest('#bannerBtn')) openBannerViewer(); });
 
 /* ---------- INTRO: banner swoops in, then settles into place ---------- */
+/* full-resolution banner for the intro tour, fetched while the password page is open */
+let FULL_BANNER = null;
+function preloadFullBanner(){ if(!FULL_BANNER){ FULL_BANNER = new Image(); FULL_BANNER.src = 'banner-full.jpg'; } return FULL_BANNER; }
+
 function playIntro(){
   return new Promise(async resolve=>{
     const brand = document.querySelector('.brand');
@@ -609,51 +620,64 @@ function playIntro(){
     S.screen='home'; render();
     window.scrollTo({top:0});
     const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    try{ await banner.decode(); }catch(e){}
+    let overlay = null;
     const finish = ()=>{
       if(finish.done) return; finish.done = true;
       brand.classList.remove('intro');
       app.classList.remove('intro-hold'); app.classList.add('intro-in');
       setTimeout(()=>app.classList.remove('intro-in'), 700);
-      overlay && overlay.remove();
+      if(overlay) overlay.remove();
       resolve();
     };
     if(reduce || !banner.animate){ finish(); return; }
+    // wait (briefly) for the sharp version so the close-ups look crisp
+    const full = preloadFullBanner();
+    const ready = (im)=> im.complete && im.naturalWidth ? Promise.resolve() : (im.decode ? im.decode() : Promise.resolve());
+    let src = banner.currentSrc || banner.src;
+    try{ await Promise.race([ready(full), new Promise((_,rej)=>setTimeout(rej, 2500))]); src = full.src; }catch(e){}
+    try{ await banner.decode(); }catch(e){}
 
     const t = banner.getBoundingClientRect();
     const vw = innerWidth, vh = innerHeight;
-    // big, centered moment: fill most of the screen
-    const s = Math.min(0.94*vw/t.width, 0.78*vh/t.height);
-    const dx = vw/2 - (t.left + t.width/2);
-    const dy = vh/2 - (t.top + t.height/2);
+    const cx = t.left + t.width/2, cy = t.top + t.height/2;
+    // zoom so the art covers the whole screen with room to roam
+    const Z = Math.max(vh*1.25/t.height, vw*1.9/t.width);
+    const W = t.width*Z, H = t.height*Z;
+    // camera position: fx/fy = 0..1 across the part of the art that's off-screen
+    const view = (fx, fy)=>{
+      const dx = W/2 - cx - fx*(W - vw);
+      const dy = H/2 - cy - fy*Math.max(0, H - vh);
+      return `translate(${dx}px,${dy}px) scale(1)`;
+    };
 
-    var overlay = document.createElement('div');
+    overlay = document.createElement('div');
     overlay.className = 'intro-overlay';
     const img = document.createElement('img');
-    img.className = 'intro-img';
-    img.src = banner.currentSrc || banner.src; img.alt = '';
-    Object.assign(img.style, {left:t.left+'px', top:t.top+'px', width:t.width+'px', height:t.height+'px'});
+    img.className = 'intro-img'; img.src = src; img.alt = '';
+    Object.assign(img.style, {
+      left:(cx - W/2)+'px', top:(cy - H/2)+'px', width:W+'px', height:H+'px',
+      border:(3*Z)+'px solid transparent', borderRadius:'0px'
+    });
     const hint = document.createElement('div'); hint.className='intro-skip'; hint.textContent='tap to skip';
     overlay.append(img, hint);
     document.body.appendChild(overlay);
     overlay.addEventListener('click', finish);
 
-    const T = (x,y,sc,r)=>`translate(${x}px,${y}px) scale(${sc}) rotate(${r}deg)`;
-    const fly = img.animate([
-      // off the bottom-left corner, small and tilted
-      {offset:0,    transform:T(dx - vw*0.95, dy + vh*0.55, s*0.35, -24), opacity:0, filter:'blur(6px)'},
-      {offset:0.12, opacity:1},
-      // swoops up past center, overshooting
-      {offset:0.42, transform:T(dx + vw*0.06, dy - vh*0.05, s*1.08, 5), filter:'blur(0px)', easing:'cubic-bezier(.2,.7,.3,1)'},
-      // settles big in the middle
-      {offset:0.52, transform:T(dx, dy, s, 0), easing:'ease-out'},
-      {offset:0.74, transform:T(dx, dy, s, 0), easing:'cubic-bezier(.6,0,.2,1)'},
-      // drops into the banner spot
-      {offset:1,    transform:T(0, 0, 1, 0), opacity:1, filter:'blur(0px)'},
-    ], {duration:4000, easing:'cubic-bezier(.3,0,.3,1)', fill:'forwards'});
-    overlay.animate([{opacity:0},{opacity:1,offset:.12},{opacity:1,offset:.78},{opacity:0}], {duration:4000, fill:'forwards'});
-    fly.onfinish = finish;
-    setTimeout(finish, 5500); // safety net
+    const D = 5600;
+    const glide = 'cubic-bezier(.45,0,.25,1)';
+    const tour = img.animate([
+      {offset:0,    transform:view(0, 0),       opacity:0, borderColor:'transparent', borderRadius:'0px'},           // the title
+      {offset:0.06, transform:view(0, 0),       opacity:1, easing:glide},
+      {offset:0.14, transform:view(0.02, 0.05), easing:glide},                                   // linger on the title
+      {offset:0.38, transform:view(0.97, 0.12), easing:glide},                                   // across the top: gulls, the Ultimate Warrior
+      {offset:0.48, transform:view(1, 1),       easing:glide},                                   // down to the umbrella raccoon
+      {offset:0.72, transform:view(0.06, 0.92), easing:glide, borderColor:'transparent'},        // back along the water to the Flying Angel IV
+      {offset:0.78, transform:view(0.06, 0.92), easing:'cubic-bezier(.6,0,.2,1)', borderColor:'transparent', borderRadius:'0px'},
+      {offset:1,    transform:`translate(0px,0px) scale(${1/Z})`, opacity:1, borderColor:'#121212', borderRadius:(16*Z)+'px'} // shrink into the banner spot
+    ], {duration:D, fill:'forwards'});
+    hint.animate([{opacity:0},{opacity:1,offset:.1},{opacity:1,offset:.7},{opacity:0,offset:.8},{opacity:0}], {duration:D, fill:'forwards'});
+    tour.onfinish = finish;
+    setTimeout(finish, D + 2000); // safety net
   });
 }
 
@@ -780,15 +804,21 @@ function renderWrite(){
     ${first
       ? `<p class="hint">Write anything. The weirder, the better. The next person has to draw it.</p>`
       : `<div class="prev-entry" id="prev"></div><p class="hint">Describe it. Only the last fold is shown, no peeking further back.</p>`}
-    <textarea class="write" id="sentence" placeholder="${first?'A raccoon borrowed the speedboat and the seagulls are not happy about it…':'I see…'}"></textarea>
+    <textarea class="write" id="sentence" placeholder="${first ? esc(pickExample()) : 'I see…'}"></textarea>
     ${first ? '' : nameFieldHtml()}
     <button class="btn" id="passBtn">Fold it</button>
     <div class="errmsg">${esc(S.err)}</div>
   </div>`;
   if(!first) renderPrevEntry($('#prev'));
   const ta = $('#sentence');
-  const grow = ()=>{ ta.style.height='auto'; ta.style.height = Math.max(96, ta.scrollHeight) + 'px'; };
+  const grow = ()=>{
+    // fit what's typed, or the example sentence when the box is empty
+    const empty = !ta.value; if(empty) ta.value = ta.placeholder;
+    ta.style.height='auto'; ta.style.height = Math.max(144, ta.scrollHeight + 6) + 'px';
+    if(empty) ta.value = '';
+  };
   ta.addEventListener('input', grow); grow();
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>{ if(document.body.contains(ta)) grow(); });
   $('#passBtn').onclick = async ()=>{
     const text = ta.value.trim();
     const name = first ? S.myName : grabName();
@@ -1023,7 +1053,7 @@ function renderPass(){
   const n = S.state.entries.length;
   const nextTask = nextIsDrawing() ? 'draw it' : 'caption it';
   if(!S.passReady){
-    app.innerHTML = `<div class="card"><div class="bigmark">${ICON_DREW.replace('class="ico"','style="width:72px;height:72px;color:#F08BB1"')}</div>
+    app.innerHTML = `<div class="card"><div class="bigmark">${ICON_DREW.replace('class="ico"','style="width:72px;height:72px;color:#19B7F2"')}</div>
       <h2 style="text-align:center">Folding it up…</h2>
       <p class="hint" style="text-align:center;margin:0">Scrambling fold ${n} and tucking it into the lake.</p></div>`;
     return;
