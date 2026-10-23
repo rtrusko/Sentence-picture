@@ -54,7 +54,27 @@ a{color:var(--foam)}
 .intro-overlay{position:fixed;inset:0;z-index:50;background:rgba(8,40,52,.72);cursor:pointer;overflow:hidden}
 .intro-img{position:fixed;transform-origin:50% 50%;border-radius:16px;border:3px solid #fff;box-shadow:0 30px 60px rgba(0,0,0,.45);will-change:transform,opacity,filter;pointer-events:none}
 .intro-skip{position:fixed;bottom:22px;left:0;right:0;text-align:center;color:rgba(255,255,255,.75);font-weight:800;font-size:13px;letter-spacing:1px;pointer-events:none}
-.password-pad{height:6vh}
+.dock{max-width:520px;margin:0 auto;position:relative}
+.dock h2.board{font-family:'Shantell Sans',cursive;color:#fff;text-align:center;font-size:clamp(26px,6vw,36px);font-weight:800;line-height:1.1;text-shadow:0 2px 0 rgba(0,0,0,.25);margin:4px 0 6px}
+.boat-wrap{position:relative;width:min(84vw,420px);margin:0 auto;z-index:1}
+.boat{display:block;width:100%;height:auto;transform-origin:50% 90%;
+  -webkit-mask-image:linear-gradient(#000 82%,transparent 99%);mask-image:linear-gradient(#000 82%,transparent 99%);
+  animation:bob 3.2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-1.4deg)}50%{transform:translateY(-8px) rotate(1.4deg)}}
+.boat.shake{animation:shake .5s ease-in-out}
+@keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-12px) rotate(-3deg)}35%{transform:translateX(10px) rotate(3deg)}55%{transform:translateX(-7px) rotate(-2deg)}75%{transform:translateX(4px) rotate(1deg)}}
+.bubble{position:absolute;left:59%;top:-1%;background:#fff;color:var(--ink);font-family:'Shantell Sans',cursive;font-weight:800;font-size:clamp(13px,3.6vw,16px);
+  padding:7px 12px;border-radius:16px;border:3px solid var(--ink);box-shadow:0 4px 0 rgba(0,0,0,.2);white-space:nowrap;z-index:2;transform-origin:0% 100%;animation:pop .35s cubic-bezier(.3,1.6,.5,1) both}
+.bubble::after{content:"";position:absolute;left:10px;bottom:-11px;width:14px;height:14px;background:#fff;border-right:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:skewX(30deg) rotate(45deg)}
+.bubble.no{background:#FFE1E0}
+.bubble.no::after{background:#FFE1E0}
+.bubble.yes{background:#DDF3E4}
+.bubble.yes::after{background:#DDF3E4}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+.dock .card{margin-top:-34px;z-index:2}
+.dock .lock-note{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--ink-soft);font-weight:700;margin-top:12px;line-height:1.45}
+.dock .lock-note svg{flex:none;width:14px;height:14px;margin-top:2px}
+@media (prefers-reduced-motion: reduce){.boat,.boat.shake{animation:none}.bubble{animation:none}}
 .brand h1{font-size:clamp(28px,6.5vw,40px);font-weight:800;line-height:1.1;text-shadow:0 1px 0 rgba(255,255,255,.45)}
 .brand h1 .w1{color:var(--mahogany)}
 .brand h1 .w2{color:#1F5F6E}
@@ -430,6 +450,7 @@ let lastScreen = null;
 function render(){
   app.classList.toggle('home', S.screen==='home');
   document.querySelector('.brand').classList.toggle('locked', S.screen==='password');
+  document.querySelector('footer').style.display = S.screen==='password' ? 'none' : '';
   document.querySelector('.brand').classList.toggle('compact', !(S.screen==='home' || S.screen==='password'));
   ({home:renderHome, password:renderPassword, write:renderWrite, draw:renderDraw, pass:renderPass, reveal:renderReveal})[S.screen]();
   if(S.screen !== lastScreen) window.scrollTo({top:0});
@@ -443,35 +464,68 @@ function enterState(st){
 
 /* ---------- PASSWORD ---------- */
 function renderPassword(){
+  const wrongNow = !!S.err && /match/.test(S.err);
   app.innerHTML = `
-  <div class="password-pad"></div>
-  <div class="card">
-    <h2>Family password</h2>
-    <p class="hint">Everything this game saves is scrambled with this password before it leaves your phone, so only the family can read the paper. Everyone uses the same password. If you were invited, ask whoever sent the link.</p>
-    <div class="field">
-      <label for="pwIn">Password</label>
-      <div class="pwrow"><input id="pwIn" type="password" autocomplete="off" placeholder="the family password"><button id="pwShow" type="button">show</button></div>
+  <div class="dock">
+    <h2 class="board">Permission to come aboard?</h2>
+    <div class="boat-wrap" id="boatWrap">
+      <div class="bubble ${wrongNow?'no':''}" id="bubble">${wrongNow?'Not on MY boat!':'Password, please!'}</div>
+      <img class="boat" id="boat" src="boat-560.webp" srcset="boat-560.webp 560w, boat.webp 900w" sizes="420px" width="900" height="900" alt="A seagull in a yellow raincoat steers the Flying Angel IV straight at you">
     </div>
-    <button class="btn" id="pwBtn">Unlock the game</button>
-    <div class="errmsg">${esc(S.err)}</div>
+    <div class="card">
+      <p class="hint">The <b>Flying Angel IV</b> only carries family. Everyone uses the same password. If you were invited, ask whoever sent you the link.</p>
+      <div class="field">
+        <label for="pwIn">Family password</label>
+        <div class="pwrow"><input id="pwIn" type="password" autocomplete="off" placeholder="the family password"><button id="pwShow" type="button">show</button></div>
+      </div>
+      <button class="btn" id="pwBtn">Come aboard</button>
+      <div class="errmsg" id="pwErr">${esc(S.err)}</div>
+      <div class="lock-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+        <span>Every sentence and drawing is scrambled with this password before it leaves your phone, so only the family can read the paper.</span></div>
+    </div>
   </div>`;
-  const inp = $('#pwIn');
+  const inp = $('#pwIn'), bubble = $('#bubble'), boat = $('#boat'), btn = $('#pwBtn'), err = $('#pwErr');
+  const say = (text, mood)=>{
+    bubble.textContent = text; bubble.className = 'bubble' + (mood ? ' '+mood : '');
+    void bubble.offsetWidth; bubble.style.animation='none'; void bubble.offsetWidth; bubble.style.animation='';
+  };
+  const shake = ()=>{ boat.classList.remove('shake'); void boat.offsetWidth; boat.classList.add('shake'); setTimeout(()=>boat.classList.remove('shake'), 520); };
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   $('#pwShow').onclick = ()=>{ inp.type = inp.type==='password' ? 'text' : 'password'; $('#pwShow').textContent = inp.type==='password' ? 'show' : 'hide'; };
+  let typedOnce = false;
+  inp.addEventListener('input', ()=>{ if(!typedOnce && inp.value){ typedOnce = true; say('Hmm, let’s see…'); } });
+  const fail = (msg, line)=>{
+    S.err = msg; err.textContent = msg; say(line, 'no'); shake();
+    btn.disabled = false; btn.textContent = 'Come aboard'; typedOnce = false; inp.select();
+  };
   const go = async ()=>{
     const pw = inp.value.trim();
-    if(pw.length < 4){ S.err='Make it at least 4 characters.'; render(); return; }
-    $('#pwBtn').disabled = true; $('#pwBtn').textContent = 'Unlocking…';
+    if(pw.length < 4){ fail('Make it at least 4 characters.', 'That’s it?'); return; }
+    btn.disabled = true; btn.textContent = 'Checking with the captain…';
     await setPassword(pw);
-    // check it against the family's games before celebrating
     const check = await getIndex();
-    if(check==='badkey'){ forgetPassword(); S.err='That password doesn\u2019t match the family\u2019s games. Try again.'; render(); return; }
-    S.err='';
+    if(check==='badkey'){ forgetPassword(); fail('That password doesn’t match the family’s games. Try again.', 'Not on MY boat!'); return; }
+    S.err=''; err.textContent='';
+    say('Welcome aboard!', 'yes');
+    if(!reduce && boat.animate){
+      await new Promise(r=>setTimeout(r, 650));
+      boat.style.animation='none';
+      const charge = boat.animate([
+        {transform:'translateY(0) scale(1)', opacity:1},
+        {transform:'translateY(-4%) scale(1.05)', offset:.25},
+        {transform:'translateY(12%) scale(3.2)', opacity:0}
+      ], {duration:700, easing:'cubic-bezier(.5,0,.8,.4)', fill:'forwards'});
+      bubble.animate([{opacity:1},{opacity:0}], {duration:200, fill:'forwards'});
+      document.querySelector('.dock .card').animate([{opacity:1,transform:'none'},{opacity:0,transform:'translateY(30px)'}], {duration:450, fill:'forwards'});
+      document.querySelector('.dock h2.board').animate([{opacity:1},{opacity:0}], {duration:300, fill:'forwards'});
+      await charge.finished.catch(()=>{});
+    }
     await playIntro();
     if(S.pendingHash){ const h = S.pendingHash; S.pendingHash=null; await loadFromHash(h); return; }
   };
-  $('#pwBtn').onclick = go;
+  btn.onclick = go;
   inp.addEventListener('keydown', e=>{ if(e.key==='Enter') go(); });
-  inp.focus();
+  if(!wrongNow) inp.focus();
 }
 function wrongPassword(){
   forgetPassword();
