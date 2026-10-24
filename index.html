@@ -1132,8 +1132,39 @@ function renderReveal(){
   $('#againBtn').onclick = ()=>{ S.state=null; S.screen='home'; S.err=''; render(); };
 }
 
+/* ---------- storage self-test: open the game link with #check on the end ---------- */
+async function runStorageCheck(){
+  document.body.classList.remove('locked');
+  document.querySelector('.brand').classList.add('locked');
+  app.innerHTML = `<div class="card"><h2>Storage check</h2><p class="hint">Testing the lake from this phone and this network…</p><pre id="chk" style="white-space:pre-wrap;font-size:13px;line-height:1.5;background:#F2F4F7;border:3px solid #121212;border-radius:10px;padding:12px"></pre></div>`;
+  const out = $('#chk'); const log = t=>{ out.textContent += t + '\n'; };
+  log('Page: ' + location.origin + location.pathname);
+  log('Network: ' + (navigator.onLine ? 'online' : 'OFFLINE'));
+  log('Pantry ID set: ' + (usePantry ? 'yes' : 'NO'));
+  const base = PANTRY_BASE + PANTRY_ID;
+  const step = async (label, url, opts)=>{
+    const t0 = performance.now();
+    try{
+      const r = await fetch(url, Object.assign({cache:'no-store'}, opts||{}));
+      const body = (await r.text().catch(()=>'')).replace(/\s+/g,' ').slice(0,160);
+      log(`${label}: ${r.status} ${r.statusText} (${Math.round(performance.now()-t0)} ms)${body ? '\n   ' + body : ''}`);
+      return r.ok;
+    }catch(e){
+      log(`${label}: BLOCKED / NO RESPONSE (${Math.round(performance.now()-t0)} ms)\n   ${e && e.message ? e.message : e}`);
+      return false;
+    }
+  };
+  await step('1. Pantry details', base);
+  const id = 'spgcheck' + Date.now().toString(36);
+  await step('2. Save test', base + '/basket/' + id, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({check:true, t:Date.now()})});
+  await step('3. Read it back', base + '/basket/' + id);
+  await step('4. Game list', base + '/basket/' + INDEX_BASKET);
+  log('\nDone. Screenshot this whole box and send it over.');
+}
+
 /* ---------- boot ---------- */
 (async function boot(){
+  if(location.hash === '#check'){ runStorageCheck(); return; }
   await loadPassword();
   let hash = location.hash || '';
   try{ if(!/SPG|g=/.test(hash) && window.top !== window) hash = window.top.location.hash || hash; }catch(e){}
